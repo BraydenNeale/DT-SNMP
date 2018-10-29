@@ -7,7 +7,7 @@ stdenv.mkDerivation rec {
     python36
     python36Packages.pip
     python36Packages.virtualenvwrapper
-    memcached
+    #memcached
   ];
 }
 

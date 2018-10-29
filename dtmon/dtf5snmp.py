@@ -40,7 +40,7 @@ class DTF5Mon(DTSNMPMonitoring):
 							deviceDisplay, 
 							timeout=timeout, 
 							logDetails=logDetails, 
-							tsPrefix="<DOMAIN>.f5",
+							tsPrefix="f5",
 							mib=mib,
 							getLatency=getLatency)
 		self.ifMib = DTIfMibMon(dtEndpoint, 
@@ -48,7 +48,7 @@ class DTF5Mon(DTSNMPMonitoring):
 							deviceDisplay, 
 							timeout=timeout, 
 							logDetails=logDetails,  
-							tsPrefix="<DOMAIN>.f5",
+							tsPrefix="f5",
 							useIfAlias = useIfAlias,
 							mib=mib,
 							bulkSize=200)
@@ -57,7 +57,7 @@ class DTF5Mon(DTSNMPMonitoring):
 							deviceDisplay, 
 							timeout=timeout, 
 							logDetails=logDetails,  
-							tsPrefix="<DOMAIN>.f5",
+							tsPrefix="f5",
 							mib=mib,
 							bulkSize=200)
 

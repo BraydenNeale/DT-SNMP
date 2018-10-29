@@ -1,29 +1,45 @@
 from dtmon.dtf5snmp import DTF5Mon
+import configparser
 
 def main():
+	config = configparser.ConfigParser()
+	config_path = './config.ini'
+	config.read(config_path)
+
+	DT_URL = config.get('dynatrace','DT_URL_SAAS')
+	DT_API_TOKEN = config.get('dynatrace','DT_API_TOKEN')
+	DEFAULT_ICON = config.get('dynatrace','DEFAULT_ICON')
+	DOMAIN = config.get('environment','DOMAIN')
+
 	dtendpoint = {
-		"url": "<DYNATRACE_URL>"
-		"apiToken": "<API_TOKEN>"
+		"url": DT_URL,
+		"apiToken": DT_API_TOKEN
 	}
-	
+
+	F5_IP = config.get('f5-swg','IP')
+	F5_HOSTNAMENAME = config.get('f5-swg','HOSTNAME')
+	F5_PORT = int(config.get('f5-swg', 'PORT'))
+	F5_SNMP_VERSION = int(config.get('f5-swg', 'SNMP_VERSION'))
+	F5_SNMP_COMMUNITY = config.get('f5-swg', 'SNMP_COMMUNITY')
+
 	f5Endpoint = {
-		"host": "<IP>",
-		"port": "<PORT>",
+		"host": F5_IP,
+		"port": F5_PORT,
 		"snmpAuth": {
-			"version": 2,
-			"username": "<COMMUNITY_STRING>"
+			"version": F5_SNMP_VERSION,
+			"username": F5_SNMP_COMMUNITY
 		}
 	}
 	
 	deviceDisplay = {
-		"id": "<DOMAIN>.f5.<HOSTNAME>", 
-		"displayName": "<HOSTNAME> | F5", 
+		"id": "{0}.f5.{1}".format(DOMAIN,F5_HOSTNAMENAME),
+		"displayName": "{0} | F5".format(F5_HOSTNAMENAME),
 		"type": "F5",
-		"ipAddresses":["<IP>"], 
-		"listenPorts":["<PORT>"], 
+		"ipAddresses":[F5_IP], 
+		"listenPorts":[F5_PORT], 
 #		"configUrl":"",
 		"tags": ["F5"],
-		"favicon":"http://assets.dynatrace.com/global/icons/infographic_rack.png",
+		"favicon": DEFAULT_ICON,
 		"groupId": "F5",
 		"properties": {}
 	}
