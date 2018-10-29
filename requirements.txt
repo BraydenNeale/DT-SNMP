@@ -1,0 +1,3 @@
+pysnmp
+requests
+pymemcache
