@@ -30,7 +30,7 @@ class DTMonitoringBase(object):
             logDetails={"level": "error",
                         "location": "/tmp/DTMonitoring.log"},
             memcachedServer = {"use": True, "address": "localhost", "port": 11211},
-            tsPrefix="<DOMAIN>.genericdevice",
+            tsPrefix="domain.genericdevice",
             getLatency = False):
         self.timeout = timeout
         self.dtEndpoint = dtEndpoint

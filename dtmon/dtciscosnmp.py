@@ -38,7 +38,7 @@ class DTCiscoMon(DTSNMPMonitoring):
 				mib={"use": False},
 				useIfAlias=False,
 				getLatency=False,
-				tsPrefix="<DOMAIN>.cisco.generic"):
+				tsPrefix="domain.cisco.generic"):
 		super(DTCiscoMon, self).__init__(dtEndpoint, 
 							deviceAuth, 
 							deviceDisplay, 

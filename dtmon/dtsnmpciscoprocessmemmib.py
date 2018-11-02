@@ -29,7 +29,7 @@ class DTCiscoProcessMon(DTSNMPMonitoring):
 				getLatency=False,
 				metrics={"cpu": True, "memory": True},
 				bulkSize=100,
-				tsPrefix="<DOMAIN>.cisco.generic"):
+				tsPrefix="domain.cisco.generic"):
 		if mib["use"] == True:
 			mib["modules"] = mib["modules"] + ('CISCO-PROCESS-MIB', 'CISCO-ENHANCED-MEMPOOL-MIB')
 		super(DTCiscoProcessMon, self).__init__(dtEndpoint, 

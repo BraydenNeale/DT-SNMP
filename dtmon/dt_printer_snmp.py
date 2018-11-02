@@ -42,7 +42,7 @@ class dt_printer_mon(DTSNMPMonitoring):
                                                 timeout=timeout,
                                                 logDetails=logDetails)
         if "Xerox" in self.deviceDisplay["tags"]:
-            self.timeSeriesIdPrefix = ("custom:%s" % ("<DOMAIN>.xerox.printer"))
+            self.timeSeriesIdPrefix = ("custom:%s" % ("domain.xerox.printer"))
             self.xerox_metric_definitions = {
                 self.deviceDisplay["name"]: {
                     # commented out all lifetime print metrics (should be better metrics to report!!!)
@@ -141,7 +141,7 @@ class dt_printer_mon(DTSNMPMonitoring):
                     }
                 }
         else:
-            self.timeSeriesIdPrefix = ("custom:%s" % ("<DOMAIN>.ricoh.printer"))
+            self.timeSeriesIdPrefix = ("custom:%s" % ("domain.ricoh.printer"))
             self.ricoh_metric_definitions = {
                 self.deviceDisplay["name"]: {
                     # "device_model": {"timeseries_suffix": ".snmp.device.model", "display_name": "Device Model"},

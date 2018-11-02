@@ -16,7 +16,7 @@ def main():
 	}
 	
 	deviceDisplay = {
-		"id": "<DOMAIN>.cisco.switch.<HOSTNAME>", 
+		"id": "domain.cisco.switch.<HOSTNAME>", 
 		"displayName": "<HOSTNAME> | Cisco Switch", 
 		"type": "Cisco Switch",
 		"ipAddresses":["<IP>"], 
@@ -38,7 +38,7 @@ def main():
 	}
 	
 	deviceDisplay2 = {
-		"id": "<DOMAIN>.cisco.switch.<HOSTNAME>", 
+		"id": "domain.cisco.switch.<HOSTNAME>", 
 		"displayName": "<HOSTNAME> | Cisco Switch", 
 		"type": "Cisco Switch",
 		"ipAddresses":["<IP>"], 
@@ -51,7 +51,7 @@ def main():
 	}
 	
 	logDetails = {"level":"debug", "location": "./DTCiscoSNMPMon.log"}
-	tsPrefix="<DOMAIN>.cisco.switch"
+	tsPrefix="domain.cisco.switch"
 	
 	switch1 = DTCiscoMon(dtendpoint, switchEndpoint, deviceDisplay, logDetails=logDetails, getLatency=True, tsPrefix=tsPrefix)
 	t_switch1 = switch1.dtrun()

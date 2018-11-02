@@ -10,8 +10,8 @@ import threading
 class DTVPNESMon(DTRestMonitoring):
 
     metrics = [
-        { "timeseriesId" : "custom:<DOMAIN>.vpn.rest.uniqueuser.count.vpngroup", "dimensions": ["vpngroup"], "displayName" : "Number of Unique Users By VPN Group", "unit" : "Count"},
-        { "timeseriesId" : "custom:<DOMAIN>.vpn.rest.uniqueuser.count.region", "dimensions": ["region"], "displayName" : "Number of Unique Users By Region", "unit" : "Count"},
+        { "timeseriesId" : "custom:domain.vpn.rest.uniqueuser.count.vpngroup", "dimensions": ["vpngroup"], "displayName" : "Number of Unique Users By VPN Group", "unit" : "Count"},
+        { "timeseriesId" : "custom:domain.vpn.rest.uniqueuser.count.region", "dimensions": ["region"], "displayName" : "Number of Unique Users By Region", "unit" : "Count"},
     ]
 
     timeQueryInSec = {

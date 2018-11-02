@@ -16,7 +16,7 @@ def main():
 	}
 
 	deviceDisplay = {
-		"id": "<DOMAIN>.uberagent.DPT NAME", 
+		"id": "domain.uberagent.DPT NAME", 
 		"displayName": "DPT NAME Uber Agent", 
 		"type": "DPT NAME Uber Agent",
 #		"ipAddresses":["10.2.244.95"], 

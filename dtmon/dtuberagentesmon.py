@@ -10,11 +10,11 @@ import threading
 class DTUbserAgentESMon(DTRestMonitoring):
 
     metrics = [
-        { "timeseriesId" : "custom:<DOMAIN>.uberagent.rest.peakdevicesonline.count", "dimensions": ["site"], "displayName" : "Peak Devices Online", "unit" : "Count"},
-        { "timeseriesId" : "custom:<DOMAIN>.uberagent.rest.totalappcrash.count", "dimensions": ["site"], "displayName" : "Total App Crash", "unit" : "Count"},
-        { "timeseriesId" : "custom:<DOMAIN>.uberagent.rest.totalapphang.count", "dimensions": ["site"], "displayName" : "Total App Hang", "unit" : "Count"},
-        { "timeseriesId" : "custom:<DOMAIN>.uberagent.rest.averagelogontime.ms", "dimensions": ["site"], "displayName" : "Average Logon Time", "unit" : "MilliSecond"},
-        { "timeseriesId" : "custom:<DOMAIN>.uberagent.rest.averagewaittime.ms", "dimensions": ["site"], "displayName" : "Average Wait Time", "unit" : "MilliSecond"}
+        { "timeseriesId" : "custom:domain.uberagent.rest.peakdevicesonline.count", "dimensions": ["site"], "displayName" : "Peak Devices Online", "unit" : "Count"},
+        { "timeseriesId" : "custom:domain.uberagent.rest.totalappcrash.count", "dimensions": ["site"], "displayName" : "Total App Crash", "unit" : "Count"},
+        { "timeseriesId" : "custom:domain.uberagent.rest.totalapphang.count", "dimensions": ["site"], "displayName" : "Total App Hang", "unit" : "Count"},
+        { "timeseriesId" : "custom:domain.uberagent.rest.averagelogontime.ms", "dimensions": ["site"], "displayName" : "Average Logon Time", "unit" : "MilliSecond"},
+        { "timeseriesId" : "custom:domain.uberagent.rest.averagewaittime.ms", "dimensions": ["site"], "displayName" : "Average Wait Time", "unit" : "MilliSecond"}
     ]
 
     timeQueryInSec = {

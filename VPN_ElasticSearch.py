@@ -16,7 +16,7 @@ def main():
 	}
 
 	deviceDisplay = {
-		"id": "<DOMAIN>.vpn", 
+		"id": "domain.vpn", 
 		"displayName": "VPN", 
 		"type": "DHS VPN",
 #		"ipAddresses":["<IP>"], 

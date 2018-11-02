@@ -20,7 +20,7 @@ def main():
 	}
 	
 	deviceDisplay = {
-		"id": "<DOMAIN>.checkpoint.sandblast.<HOST_NAME>", 
+		"id": "domain.checkpoint.sandblast.<HOST_NAME>", 
 		"displayName": "<HOST_NAME> | Sandblast", 
 		"type": "Checkpoint-Sandblast",
 		"ipAddresses":["<IP>"], 

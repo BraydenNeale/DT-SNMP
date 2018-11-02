@@ -16,7 +16,7 @@ def main():
 	}
 	
 	deviceDisplay1 = {
-		"id": "<DOMAIN>.cisco.vpn.<HOST_NAME>", 
+		"id": "domain.cisco.vpn.<HOST_NAME>", 
 		"displayName": "<HOST_NAME> | Cisco VPN", 
 		"type": "Cisco VPN",
 		"ipAddresses":["<IP>"], 
@@ -38,7 +38,7 @@ def main():
 	}
 	
 	deviceDisplay2 = {
-		"id": "<DOMAIN>.cisco.vpn.<HOST_NAME", 
+		"id": "domain.cisco.vpn.<HOST_NAME", 
 		"displayName": "<HOST_NAME> | Cisco VPN", 
 		"type": "Cisco VPN",
 		"ipAddresses":["<IP>"],
@@ -52,7 +52,7 @@ def main():
 	
 	logDetails = {"level":"error", "location": "./DTCiscoVPNMon.log"}
 	
-	vpn1 = DTCiscoMon(dtendpoint, vpnEndpoint1, deviceDisplay1, logDetails=logDetails, getLatency=False, mib={"use": False}, tsPrefix="<DOMAIN>.cisco.vpn")
+	vpn1 = DTCiscoMon(dtendpoint, vpnEndpoint1, deviceDisplay1, logDetails=logDetails, getLatency=False, mib={"use": False}, tsPrefix="domain.cisco.vpn")
 	t_vpn1 = vpn1.dtrun()
 	
 	vpn2 = DTCiscoMon(dtendpoint, vpnEndpoint2, deviceDisplay2, logDetails=logDetails, getLatency=False, mib={"use": False})

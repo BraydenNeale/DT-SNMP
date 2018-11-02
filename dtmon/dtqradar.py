@@ -40,7 +40,7 @@ class DTQradarMon(DTSNMPMonitoring):
 							deviceDisplay, 
 							timeout=timeout, 
 							logDetails=logDetails, 
-							tsPrefix="<DOMAIN>.checkpoint.qradar",
+							tsPrefix="domain.checkpoint.qradar",
 							mib=mib,
 							getLatency=getLatency)
 		self.ifMib = DTIfMibMon(dtEndpoint, 
@@ -48,7 +48,7 @@ class DTQradarMon(DTSNMPMonitoring):
 							deviceDisplay, 
 							timeout=timeout, 
 							logDetails=logDetails,  
-							tsPrefix="<DOMAIN>.checkpoint.qradar",
+							tsPrefix="domain.checkpoint.qradar",
 							useIfAlias = useIfAlias,
 							mib=mib,
 							bulkSize=200)
@@ -57,7 +57,7 @@ class DTQradarMon(DTSNMPMonitoring):
 							deviceDisplay, 
 							timeout=timeout, 
 							logDetails=logDetails,  
-							tsPrefix="<DOMAIN>.checkpoint.qradar",
+							tsPrefix="domain.checkpoint.qradar",
 							mib=mib,
 							bulkSize=200)
 

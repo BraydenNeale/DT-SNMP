@@ -40,7 +40,7 @@ class DTSandblastMon(DTSNMPMonitoring):
 							deviceDisplay, 
 							timeout=timeout, 
 							logDetails=logDetails, 
-							tsPrefix="<DOMAIN>.checkpoint.sandblast",
+							tsPrefix="domain.checkpoint.sandblast",
 							mib=mib,
 							getLatency=getLatency)
 		self.ifMib = DTIfMibMon(dtEndpoint, 
@@ -48,7 +48,7 @@ class DTSandblastMon(DTSNMPMonitoring):
 							deviceDisplay, 
 							timeout=timeout, 
 							logDetails=logDetails,  
-							tsPrefix="<DOMAIN>.checkpoint.sandblast",
+							tsPrefix="domain.checkpoint.sandblast",
 							useIfAlias = useIfAlias,
 							mib=mib,
 							bulkSize=200)
@@ -57,7 +57,7 @@ class DTSandblastMon(DTSNMPMonitoring):
 							deviceDisplay, 
 							timeout=timeout, 
 							logDetails=logDetails,  
-							tsPrefix="<DOMAIN>.checkpoint.sandblast",
+							tsPrefix="domain.checkpoint.sandblast",
 							mib=mib,
 							bulkSize=200)
 

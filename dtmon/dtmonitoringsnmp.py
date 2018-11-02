@@ -55,7 +55,7 @@ class DTSNMPMonitoring(DTMonitoringBase):
                  mib={"use": False, 
                       "locations": ["file:///usr/share/snmp/mibs"],
                       "modules": ()},
-                 tsPrefix="<DOMAIN>.genericsnmpdevice",
+                 tsPrefix="domain.genericsnmpdevice",
                  getLatency=False,
                  getSystemProps=True):
         super(DTSNMPMonitoring, self).__init__(dtEndpoint,

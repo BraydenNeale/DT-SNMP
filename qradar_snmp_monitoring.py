@@ -18,7 +18,7 @@ def main():
 	}
 	
 	deviceDisplay = {
-		"id": "<DOMAIN>.qradar.<HOST_NAME>", 
+		"id": "domain.qradar.<HOST_NAME>", 
 		"displayName": "<HOST_NAME> | Qradar",
 		"type": "Qradar",
 		"ipAddresses":["<IP>"], 

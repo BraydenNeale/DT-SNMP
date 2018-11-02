@@ -21,7 +21,7 @@ def main():
 	}
 	
 	deviceDisplay1 = {
-		"id": "<DOMAIN>.checkpoint.dlp.<HOST_NAME>", 
+		"id": "domain.checkpoint.dlp.<HOST_NAME>", 
 		"displayName": "<HOST_NAME> | DLP", 
 		"type": "Checkpoint-DLP",
 		"ipAddresses":["<IP>"], 
@@ -47,7 +47,7 @@ def main():
 	}
 	
 	deviceDisplay2 = {
-		"id": "<DOMAIN>.checkpoint.dlp.<HOST_NAME>", 
+		"id": "domain.checkpoint.dlp.<HOST_NAME>", 
 		"displayName": "<HOST_NAME> | DLP", 
 		"type": "Checkpoint-DLP",
 		"ipAddresses":["<IP>"], 

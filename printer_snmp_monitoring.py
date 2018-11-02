@@ -56,8 +56,8 @@ class Worker(threading.Thread):
         }
 
         deviceDisplay = {
-            "id": "<DOMAIN>." + printer_id + "." + hosts["host"] + "<DOMAIN>", 
-            "name": printer_type + " | " + hosts["host"] + "<DOMAIN>", 
+            "id": "domain." + printer_id + "." + hosts["host"] + "domain", 
+            "name": printer_type + " | " + hosts["host"] + "domain", 
             "type": printer_type,
             "ips": [hosts["ip"]], 
             "ports":["161"],

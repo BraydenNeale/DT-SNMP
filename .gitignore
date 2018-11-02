@@ -2,3 +2,4 @@
 config.ini
 dtmon/__pycache__/
 dt-snmp-venv/
+Dependencies/

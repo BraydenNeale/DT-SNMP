@@ -53,7 +53,7 @@ class DTHostResourcesMibMon(DTSNMPMonitoring):
 				logDetails={"level":"error",
 				            "location": "./dthostresourcemibmon.log"},
 				mib={"use": False},
-				tsPrefix="<DOMAIN>.genrichost",
+				tsPrefix="domain.genrichost",
 				bulkSize=100):
 		if mib["use"] == True:
 			mib["modules"] = mib["modules"] + ("HOST-RESOURCES-MIB",)		
