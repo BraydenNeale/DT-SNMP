@@ -1,5 +1,6 @@
 from dtmon.dtmonitoringsnmp import DTSNMPMonitoring
 
+import random
 import json
 import logging
 import requests
@@ -8,6 +9,9 @@ import socket
 import _thread
 import time
 from requests.auth import HTTPBasicAuth
+from pysnmp.entity.rfc3413.oneliner import cmdgen
+from pysnmp.hlapi import *
+from pysnmp.smi import builder, compiler, view, rfc1902
 
 import ruxit.api.selectors
 from ruxit.api.base_plugin import RemoteBasePlugin
@@ -35,6 +39,17 @@ class CustomSnmpBasePluginRemote(RemoteBasePlugin):
             logger.setLevel(logging.DEBUG)
         else:
             logger.setLevel(logging.WARNING)
+
+        # Temp
+        logger.info("host_name - {}".format(host_name))
+        logger.info("group_name - {}".format(group_name))
+        logger.info("device_type - {}".format(device_type))
+        logger.info("snmp_version - {}".format(snmp_version))
+        logger.info("snmp_user - {}".format(snmp_user))
+        logger.info("auth_protocol - {}".format(auth_protocol))
+        logger.info("auth_key - {}".format(auth_key))
+        logger.info("priv_protocol - {}".format(priv_protocol))
+        logger.info("priv_key - {}".format(priv_key))
         
         # Default port
         port = 161
@@ -48,7 +63,7 @@ class CustomSnmpBasePluginRemote(RemoteBasePlugin):
         # Create the group/device entities in Dynatrace
         g1_name = "{0} - {1}".format(device_type, group_name)
         g1 = self.topology_builder.create_group(g1_name, g1_name)
-        e1_name = "{0} - {1}".format(device_type - host_name)
+        e1_name = "{0} - {1}".format(device_type, host_name)
         e1 = g1.create_element(e1_name, e1_name)
         
         # Poll the requested device for IF-MIB
@@ -56,18 +71,23 @@ class CustomSnmpBasePluginRemote(RemoteBasePlugin):
         # Poll the requested device for Host-Resource-MIB
             #incoming_traffic, outgoing_traffic, inbound_error_rate, outbound_error_rate, inbound_loss_rate, outbound_loss_rate
 
+        # Test Plugin
+        data = {}
+        data['cpu_utilisation'] = random.randint(0,101)
+        data['disk_utilisation'] = random.randint(0,101)
+        data['physical_memory_utilisation'] = random.randint(0,101)
+        data['virtual_memory_utilisation'] = random.randint(0,101)
+        data['other_memory_utilisation'] = random.randint(0,101)
+        data['incoming_traffic'] = random.randint(0,100001)
+        data['outgoing_traffic'] = random.randint(0,100001)
+        data['inbound_error_rate'] = random.randint(0,101)
+        data['outbound_error_rate'] = random.randint(0,101)
+        data['inbound_loss_rate'] = random.randint(0,101)
+        data['outbound_loss_rate'] = random.randint(0,101)
+
         # TODO handle dimensions - see official extension code
         #e1.absolute(key = metric["name"], value = split["result"], dimensions = split["dimensions"])
 
-        e1.absolute(key = "cpu_utilisation", value = cpu_utilisation)
-        e1.absolute(key = "disk_utilisation", value = disk_utilisation)
-        e1.absolute(key = "physical_memory_utilisation", value = physical_memory_utilisation)
-        e1.absolute(key = "virtual_memory_utilisation", value = virtual_memory_utilisation)
-        e1.absolute(key = "other_memory_utilisation", value = other_memory_utilisation)
-        e1.absolute(key = "incoming_traffic", value = incoming_traffic)
-        e1.absolute(key = "outgoing_traffic", value = outgoing_traffic)
-        e1.absolute(key = "inbound_error_rate", value = inbound_error_rate)
-        e1.absolute(key = "outbound_error_rate", value = outbound_error_rate)
-        e1.absolute(key = "inbound_loss_rate", value = inbound_loss_rate)
-        e1.absolute(key = "outbound_loss_rate", value = outbound_loss_rate)
+        for key,value in data.items():
+            e1.absolute(key=key, value=value)
     
