@@ -1,4 +1,4 @@
-from dtmon.dtmonitoringsnmp import DTSNMPMonitoring
+#from dtmon.dtmonitoringsnmp import DTSNMPMonitoring
 
 import random
 import json
@@ -9,9 +9,9 @@ import socket
 import _thread
 import time
 from requests.auth import HTTPBasicAuth
-from pysnmp.entity.rfc3413.oneliner import cmdgen
-from pysnmp.hlapi import *
-from pysnmp.smi import builder, compiler, view, rfc1902
+#from pysnmp.entity.rfc3413.oneliner import cmdgen
+#from pysnmp.hlapi import *
+#from pysnmp.smi import builder, compiler, view, rfc1902
 
 import ruxit.api.selectors
 from ruxit.api.base_plugin import RemoteBasePlugin
