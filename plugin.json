@@ -118,7 +118,7 @@
       },
       {
          "key": "snmp_user",
-         "type": "String"
+         "type": "Password"
       },
       {
          "key": "auth_protocol",
@@ -126,7 +126,7 @@
       },
       {
          "key": "auth_key",
-         "type": "String"
+         "type": "Password"
       },
       {
          "key": "priv_protocol",
@@ -134,7 +134,7 @@
       },
       {
          "key": "priv_key",
-         "type": "String"
+         "type": "Password"
       },
       {
          "key": "group",
