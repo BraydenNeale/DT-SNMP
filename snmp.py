@@ -117,11 +117,14 @@ def test_poller():
 
     host_resource_oids = [(hostmib_name, metric) for metric in hostmib_metrics]
     if_oids = [(ifmib_name, metric) for metric in ifmib_metrics]
-    oids = host_resource_oids + if_oids
 
     poller = Poller(device, authentication)
-    gen = poller.snmp_connect_bulk(oids)
+    gen = poller.snmp_connect_bulk(host_resource_oids)
+    process_poll_result(gen)
+    gen = poller.snmp_connect_bulk(if_oids)
+    process_poll_result(gen)
 
+def process_poll_result(gen):
     for item in gen:
         errorIndication, errorStatus, errorIndex, varBinds = item
         
