@@ -27,17 +27,42 @@ class Poller():
     def __init__(self, device, authentication):
         self.authentication = authentication
         self.device = device
-        self.__build_auth_object()
+        self._build_auth_object()
 
     def snmp_connect(self, oid):
-        iter = getCmd(SnmpEngine(),
+        gen = getCmd(
+            SnmpEngine(),
             self.auth_object,
             UdpTransportTarget((self.device["host"], self.device["port"])),
             ContextData(),
             ObjectType(ObjectIdentity(oid)))
-        return next(iter)
+        return next(gen)
 
-    def __build_auth_object(self):
+    def snmp_connect_bulk(self, oids):
+        non_repeaters = 0
+        max_repetitions = 25
+
+        if (isinstance(oids, str)):
+            oid_object = [ObjectType(ObjectIdentity(oids))]
+        elif (isinstance(oids, tuple)):
+            oid_object = [ObjectType(ObjectIdentity(*oids))]
+        elif(isinstance(oids, list)):
+            #oid_object = [ObjectType(ObjectIdentity(oid)) for oid in oids]
+            oid_object = [ObjectType(ObjectIdentity(*oid)) for oid in oids]
+
+        gen = bulkCmd(
+            SnmpEngine(),
+            self.auth_object,
+            UdpTransportTarget((self.device["host"], self.device["port"])),
+            ContextData(),
+            non_repeaters,
+            max_repetitions,             
+            *oid_object,
+            lexicographicMode=False)
+
+        return gen
+
+    def _build_auth_object(self):
         authentication = self.authentication
         if (authentication["version"] == 3):
             self.auth_object = UsmUserData(
@@ -70,10 +95,25 @@ def test_poller():
         }
     }
 
+    oids = [
+        ('HOST-RESOURCES-MIB', 'hrProcessorLoad'),
+        ('IF-MIB', 'ifInOctets')
+    ]
+
     poller = Poller(device, authentication)
-    oid = "1.3.6.1.2.1.1.1.0"
-    value = poller.snmp_connect(oid)
-    print(value)
+    gen = poller.snmp_connect_bulk(oids)
+
+    for item in gen:
+        errorIndication, errorStatus, errorIndex, varBinds = item
+        
+        if errorIndication:
+            print(errorIndication)
+        elif errorStatus:
+            print('%s at %s' % (errorStatus.prettyPrint(),
+                                errorIndex and varBinds[int(errorIndex) - 1][0] or '?'))
+        else:
+            for varBind in varBinds:
+                print(' = '.join([x.prettyPrint() for x in varBind]))
 
 if __name__ == '__main__':
     test_poller()
