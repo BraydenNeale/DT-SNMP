@@ -46,8 +46,7 @@ class Poller():
             oid_object = [ObjectType(ObjectIdentity(oids))]
         elif (isinstance(oids, tuple)):
             oid_object = [ObjectType(ObjectIdentity(*oids))]
-        elif(isinstance(oids, list)):
-            #oid_object = [ObjectType(ObjectIdentity(oid)) for oid in oids]
+        elif(isinstance(oids, list)): # List of Tuple
             oid_object = [ObjectType(ObjectIdentity(*oid)) for oid in oids]
 
         gen = bulkCmd(
@@ -95,10 +94,30 @@ def test_poller():
         }
     }
 
-    oids = [
-        ('HOST-RESOURCES-MIB', 'hrProcessorLoad'),
-        ('IF-MIB', 'ifInOctets')
+    hostmib_name = 'HOST-RESOURCES-MIB'
+    hostmib_metrics = [
+        'hrProcessorLoad', # CPU Utilisation
+        'hrStorageType',
+        'hrStorageDescr',
+        'hrStorageSize',
+        'hrStorageUsed',
     ]
+
+    ifmib_name = 'IF-MIB'
+    ifmib_metrics = [
+        'ifInOctets', # Incoming Traffic
+        'ifHCOutOctets', # Outgoing Traffic,
+        'ifInErrors', # Incoming errors
+        'ifOutErrors', # Outgoing errors
+        'ifInDiscards', # Incoming loss rate
+        'ifOutDiscards', # Outgoing loss rate
+        'ifInUcastPkts',
+        'ifOutUcastPkts',
+    ]
+
+    host_resource_oids = [(hostmib_name, metric) for metric in hostmib_metrics]
+    if_oids = [(ifmib_name, metric) for metric in ifmib_metrics]
+    oids = host_resource_oids + if_oids
 
     poller = Poller(device, authentication)
     gen = poller.snmp_connect_bulk(oids)
