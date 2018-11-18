@@ -52,11 +52,11 @@ def _validate_authentication(config):
         "version": int(snmp_version),
         "user": snmp_user,
         "auth": {
-            "protocol": auth_protocol,
+            "protocol": auth_protocol.lower(),
             "key": auth_key
         },
         "priv": {
-            "protocol": priv_protocol,
+            "protocol": priv_protocol.lower(),
             "key": priv_key
         }
     }
