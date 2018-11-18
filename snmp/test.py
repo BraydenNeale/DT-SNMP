@@ -13,8 +13,8 @@ def test_query():
    hr_mib = HostResourceMIB(device, authentication)
    hr_mib.poll_metrics()
 
-   if_mib = IFMIB(device, authentication)
-   if_mib.poll_metrics()
+   #if_mib = IFMIB(device, authentication)
+   #if_mib.poll_metrics()
 
 def _validate_device(config):
     hostname = config.get('device','hostname')
@@ -52,11 +52,11 @@ def _validate_authentication(config):
         "version": int(snmp_version),
         "user": snmp_user,
         "auth": {
-            "protocol": auth_protocol.lower(),
+            "protocol": auth_protocol,
             "key": auth_key
         },
         "priv": {
-            "protocol": priv_protocol.lower(),
+            "protocol": priv_protocol,
             "key": priv_key
         }
     }

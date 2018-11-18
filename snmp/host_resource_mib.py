@@ -8,9 +8,9 @@ class HostResourceMIB():
 	mib_metrics = [
 	    'hrProcessorLoad', # CPU Utilisation
 	    #'hrStorageType',
-	    'hrStorageDescr',
-	    'hrStorageSize',
-	    'hrStorageUsed',
+	    #'hrStorageDescr',
+	    #'hrStorageSize',
+	    #'hrStorageUsed',
 	]
 
 	cpu_usage = 'hrProcessorLoad'
@@ -36,15 +36,23 @@ class HostResourceMIB():
 		self._process_result(gen)
 
 	def _process_result(self,gen):
+		cpu_index_list = []
 		for item in gen:
-		    errorIndication, errorStatus, errorIndex, varBinds = item
-		    
-		    if errorIndication:
-		        print(errorIndication)
-		    elif errorStatus:
-		        print('%s at %s' % (errorStatus.prettyPrint(),
-		                            errorIndex and varBinds[int(errorIndex) - 1][0] or '?'))
-		    else:
-		        for varBind in varBinds:
-		            print(' = '.join([x.prettyPrint() for x in varBind]))
+			errorIndication, errorStatus, errorIndex, varBinds = item
+
+			if errorIndication:
+			    print(errorIndication)
+			elif errorStatus:
+			    print('%s at %s' % (errorStatus.prettyPrint(),
+			                        errorIndex and varBinds[int(errorIndex) - 1][0] or '?'))
+			else:
+			    for name,value in varBinds:
+			    	if self.cpu_usage in name.prettyPrint():
+			    		cpu_index_list.append(value)
+
+		average_cpu = self._calculate_cpu(cpu_index_list)
+		print(average_cpu)
+
+	def _calculate_cpu(self, cpu_index):
+		return sum(cpu_index) / float(len(cpu_index))
 
