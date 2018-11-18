@@ -1,4 +1,4 @@
-from poller import Poller
+from host_resource_mib import HostResourceMIB
 import configparser
 
 def query():
@@ -8,8 +8,9 @@ def query():
 
    device = _validate_device(config)
    authentication = _validate_authentication(config)
-   _poll_ifmib(device, authentication)
-   _poll_hostmib(device, authentication)
+   #_poll_ifmib(device, authentication)
+   hr_mib = HostResourceMIB(device, authentication)
+   hr_mib.poll_metrics()
 
 def _poll_ifmib(device, authentication):
     ifmib_name = 'IF-MIB'
@@ -27,21 +28,6 @@ def _poll_ifmib(device, authentication):
     if_oids = [(ifmib_name, metric) for metric in ifmib_metrics]
     poller = Poller(device, authentication)
     gen = poller.snmp_connect_bulk(if_oids)
-    process_poll_result(gen)
-
-def _poll_hostmib(device, authentication):
-    hostmib_name = 'HOST-RESOURCES-MIB'
-    hostmib_metrics = [
-        'hrProcessorLoad', # CPU Utilisation
-        'hrStorageType',
-        'hrStorageDescr',
-        'hrStorageSize',
-        'hrStorageUsed',
-    ]
-
-    host_resource_oids = [(hostmib_name, metric) for metric in hostmib_metrics]
-    poller = Poller(device, authentication)
-    gen = poller.snmp_connect_bulk(host_resource_oids)
     process_poll_result(gen)
 
 def _validate_device(config):
