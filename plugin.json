@@ -109,7 +109,7 @@
          "type": "String"
       },
       {
-         "key": "host_name",
+         "key": "hostname",
          "type": "String"
       },
       {
@@ -149,7 +149,7 @@
       "displayName": "SNMP Base",
       "properties" : [
          { "key" : "device_type", "displayName": "Type of Device", "displayOrder": 1, "displayHint": "Only used for metric management" },
-         { "key" : "host_name", "displayName": "Hostname/IP of device", "displayOrder": 2, "displayHint": "127.0.0.1[:161]" },
+         { "key" : "hostname", "displayName": "Hostname/IP of device", "displayOrder": 2, "displayHint": "127.0.0.1[:161]" },
          { "key" : "snmp_version", "displayName": "SNMP Version", "displayOrder": 3, "displayHint": "2/3" },
          { "key" : "snmp_user", "displayName": "SNMP auth user or community name", "displayOrder": 4, "displayHint": ""},
          { "key" : "auth_protocol", "displayName": "SNMP v3 Auth protocol", "displayOrder": 5, "displayHint": "MD5/SHA (v3 only)"},

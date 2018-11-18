@@ -24,7 +24,7 @@ logger = logging.getLogger(__name__)
 class CustomSnmpBasePluginRemote(RemoteBasePlugin):
     def query(self, **kwargs):
         config = kwargs["config"]
-        host_name = config["host_name"]
+        hostname = config["hostname"]
         group_name = config["group"]
         device_type = config["device_type"]
         snmp_version = config["snmp_version"]
@@ -41,7 +41,7 @@ class CustomSnmpBasePluginRemote(RemoteBasePlugin):
             logger.setLevel(logging.WARNING)
 
         # Temp
-        logger.info("host_name - {}".format(host_name))
+        logger.info("hostname - {}".format(hostname))
         logger.info("group_name - {}".format(group_name))
         logger.info("device_type - {}".format(device_type))
         logger.info("snmp_version - {}".format(snmp_version))
@@ -55,15 +55,15 @@ class CustomSnmpBasePluginRemote(RemoteBasePlugin):
         port = 161
         
         # If entered as 127.0.0.1:1234, extract the ip and the port
-        split_host = host_name.split(":")
+        split_host = hostname.split(":")
         if len(split_host) > 1:
-            host_name = split_host[0]
+            hostname = split_host[0]
             port = split_host[1]
 
         # Create the group/device entities in Dynatrace
         g1_name = "{0} - {1}".format(device_type, group_name)
         g1 = self.topology_builder.create_group(g1_name, g1_name)
-        e1_name = "{0} - {1}".format(device_type, host_name)
+        e1_name = "{0} - {1}".format(device_type, hostname)
         e1 = g1.create_element(e1_name, e1_name)
         
         # Poll the requested device for IF-MIB
