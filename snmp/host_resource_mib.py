@@ -37,6 +37,10 @@ class HostResourceMIB():
 
 	def _process_result(self,gen):
 		cpu_index_list = []
+		physical_memory = []
+		virtual_memory = []
+		disks = []
+
 		for item in gen:
 			errorIndication, errorStatus, errorIndex, varBinds = item
 
@@ -54,5 +58,12 @@ class HostResourceMIB():
 		print(average_cpu)
 
 	def _calculate_cpu(self, cpu_index):
+		# TODO handle state where list contains EndofMib objects
 		return sum(cpu_index) / float(len(cpu_index))
+
+	def _calculate_memory(self, physical_memory, virtual_memory):
+		pass
+
+	def _calculate_disk(self, disks):
+		pass
 
