@@ -8,7 +8,41 @@ def query():
 
    device = _validate_device(config)
    authentication = _validate_authentication(config)
-   test_poller(device, authentication)
+   _poll_ifmib(device, authentication)
+   _poll_hostmib(device, authentication)
+
+def _poll_ifmib(device, authentication):
+    ifmib_name = 'IF-MIB'
+    ifmib_metrics = [
+        'ifInOctets', # Incoming Traffic
+        'ifHCOutOctets', # Outgoing Traffic,
+        'ifInErrors', # Incoming errors
+        'ifOutErrors', # Outgoing errors
+        'ifInDiscards', # Incoming loss rate
+        'ifOutDiscards', # Outgoing loss rate
+        'ifInUcastPkts',
+        'ifOutUcastPkts',
+    ]
+
+    if_oids = [(ifmib_name, metric) for metric in ifmib_metrics]
+    poller = Poller(device, authentication)
+    gen = poller.snmp_connect_bulk(if_oids)
+    process_poll_result(gen)
+
+def _poll_hostmib(device, authentication):
+    hostmib_name = 'HOST-RESOURCES-MIB'
+    hostmib_metrics = [
+        'hrProcessorLoad', # CPU Utilisation
+        'hrStorageType',
+        'hrStorageDescr',
+        'hrStorageSize',
+        'hrStorageUsed',
+    ]
+
+    host_resource_oids = [(hostmib_name, metric) for metric in hostmib_metrics]
+    poller = Poller(device, authentication)
+    gen = poller.snmp_connect_bulk(host_resource_oids)
+    process_poll_result(gen)
 
 def _validate_device(config):
     hostname = config.get('device','hostname')
@@ -31,7 +65,6 @@ def _validate_device(config):
     }
 
     return device
-
 
 def _validate_authentication(config):
     snmp_version = config.get('authentication', 'version')
@@ -57,37 +90,6 @@ def _validate_authentication(config):
     }
 
     return authentication
-
-def test_poller(device, authentication):
-    hostmib_name = 'HOST-RESOURCES-MIB'
-    hostmib_metrics = [
-        'hrProcessorLoad', # CPU Utilisation
-        'hrStorageType',
-        'hrStorageDescr',
-        'hrStorageSize',
-        'hrStorageUsed',
-    ]
-
-    ifmib_name = 'IF-MIB'
-    ifmib_metrics = [
-        'ifInOctets', # Incoming Traffic
-        'ifHCOutOctets', # Outgoing Traffic,
-        'ifInErrors', # Incoming errors
-        'ifOutErrors', # Outgoing errors
-        'ifInDiscards', # Incoming loss rate
-        'ifOutDiscards', # Outgoing loss rate
-        'ifInUcastPkts',
-        'ifOutUcastPkts',
-    ]
-
-    host_resource_oids = [(hostmib_name, metric) for metric in hostmib_metrics]
-    if_oids = [(ifmib_name, metric) for metric in ifmib_metrics]
-
-    poller = Poller(device, authentication)
-    gen = poller.snmp_connect_bulk(host_resource_oids)
-    process_poll_result(gen)
-    gen = poller.snmp_connect_bulk(if_oids)
-    process_poll_result(gen)
 
 def process_poll_result(gen):
     for item in gen:
