@@ -1,34 +1,20 @@
 from host_resource_mib import HostResourceMIB
+from if_mib import IFMIB
 import configparser
 
-def query():
+def test_query():
    config = configparser.SafeConfigParser()
    config_path = './example.ini'
    config.read(config_path)
 
    device = _validate_device(config)
    authentication = _validate_authentication(config)
-   #_poll_ifmib(device, authentication)
+
    hr_mib = HostResourceMIB(device, authentication)
    hr_mib.poll_metrics()
 
-def _poll_ifmib(device, authentication):
-    ifmib_name = 'IF-MIB'
-    ifmib_metrics = [
-        'ifInOctets', # Incoming Traffic
-        'ifHCOutOctets', # Outgoing Traffic,
-        'ifInErrors', # Incoming errors
-        'ifOutErrors', # Outgoing errors
-        'ifInDiscards', # Incoming loss rate
-        'ifOutDiscards', # Outgoing loss rate
-        'ifInUcastPkts',
-        'ifOutUcastPkts',
-    ]
-
-    if_oids = [(ifmib_name, metric) for metric in ifmib_metrics]
-    poller = Poller(device, authentication)
-    gen = poller.snmp_connect_bulk(if_oids)
-    process_poll_result(gen)
+   if_mib = IFMIB(device, authentication)
+   if_mib.poll_metrics()
 
 def _validate_device(config):
     hostname = config.get('device','hostname')
@@ -77,18 +63,5 @@ def _validate_authentication(config):
 
     return authentication
 
-def process_poll_result(gen):
-    for item in gen:
-        errorIndication, errorStatus, errorIndex, varBinds = item
-        
-        if errorIndication:
-            print(errorIndication)
-        elif errorStatus:
-            print('%s at %s' % (errorStatus.prettyPrint(),
-                                errorIndex and varBinds[int(errorIndex) - 1][0] or '?'))
-        else:
-            for varBind in varBinds:
-                print(' = '.join([x.prettyPrint() for x in varBind]))
-
 if __name__ == '__main__':
-    query()
+    test_query()
