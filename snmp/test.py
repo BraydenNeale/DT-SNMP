@@ -1,24 +1,64 @@
 from poller import Poller
+import configparser
 
-def test_poller():
+def query():
+   config = configparser.SafeConfigParser()
+   config_path = './example.ini'
+   config.read(config_path)
+
+   device = _validate_device(config)
+   authentication = _validate_authentication(config)
+   test_poller(device, authentication)
+
+def _validate_device(config):
+    hostname = config.get('device','hostname')
+    group_name = config.get('device', 'group')
+    device_type = config.get('device', 'type')
+
+    # Default port
+    port = 161
+    # If entered as 127.0.0.1:1234, extract the ip and the port
+    split_host = hostname.split(":")
+    if len(split_host) > 1:
+        hostname = split_host[0]
+        port = split_host[1]
+
+    # Check inputs are valid...
+
     device = {
-        "host":"demo.snmplabs.com",
-        "port": 161
+        "host": hostname,
+        "port": int(port)
     }
 
+    return device
+
+
+def _validate_authentication(config):
+    snmp_version = config.get('authentication', 'version')
+    snmp_user = config.get('authentication', 'user')
+    auth_protocol = config.get('authentication', 'auth_protocol', fallback=None)
+    auth_key = config.get('authentication', 'auth_key', fallback=None)
+    priv_protocol = config.get('authentication', 'priv_protocol', fallback=None)
+    priv_key = config.get('authentication', 'priv_key', fallback=None)
+
+    # Check inputs are valid...
+
     authentication = {
-        "version": 2,
-        "user": "public",
+        "version": int(snmp_version),
+        "user": snmp_user,
         "auth": {
-            "protocol": None,
-            "key": None
+            "protocol": auth_protocol,
+            "key": auth_key
         },
         "priv": {
-            "protocol": None,
-            "key": None
+            "protocol": priv_protocol,
+            "key": priv_key
         }
     }
 
+    return authentication
+
+def test_poller(device, authentication):
     hostmib_name = 'HOST-RESOURCES-MIB'
     hostmib_metrics = [
         'hrProcessorLoad', # CPU Utilisation
@@ -63,4 +103,4 @@ def process_poll_result(gen):
                 print(' = '.join([x.prettyPrint() for x in varBind]))
 
 if __name__ == '__main__':
-    test_poller()
+    query()
