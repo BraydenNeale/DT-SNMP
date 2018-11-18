@@ -1,5 +1,6 @@
 *.log
 config.ini
 dtmon/__pycache__/
+snmp/__pycache__/
 dt-snmp-venv/
 dependencies/
