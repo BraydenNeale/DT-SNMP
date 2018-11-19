@@ -65,17 +65,15 @@ class CustomSnmpBasePluginRemote(RemoteBasePlugin):
         e1 = g1.create_element(e1_name, e1_name)
         
         # Poll the requested device for IF-MIB
-            #cpu_utilisation, disk_utilisation, physical_memory_utilisation, virtual_memory_utilisation, other_memory_utilisation
+            #cpu_utilisation, memory_utilisation, disk_utilisation
         # Poll the requested device for Host-Resource-MIB
             #incoming_traffic, outgoing_traffic, inbound_error_rate, outbound_error_rate, inbound_loss_rate, outbound_loss_rate
 
         # Test Plugin
         data = {}
         data['cpu_utilisation'] = random.randint(0,101)
+        data['memory_utilisation'] = random.randint(0,101)
         data['disk_utilisation'] = random.randint(0,101)
-        data['physical_memory_utilisation'] = random.randint(0,101)
-        data['virtual_memory_utilisation'] = random.randint(0,101)
-        data['other_memory_utilisation'] = random.randint(0,101)
         data['incoming_traffic'] = random.randint(0,100001)
         data['outgoing_traffic'] = random.randint(0,100001)
         data['inbound_error_rate'] = random.randint(0,101)

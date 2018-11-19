@@ -25,15 +25,7 @@
       {
          "entity": "CUSTOM_DEVICE",
          "timeseries":{
-            "key":"disk_utilisation",
-            "unit":"Percent",
-            "displayname":"Disk utilisation"
-         }
-      },
-      {
-         "entity": "CUSTOM_DEVICE",
-         "timeseries":{
-            "key":"physical_memory_utilisation",
+            "key":"memory_utilisation",
             "unit":"Percent",
             "displayname":"Memory utilisation - physical"
          }
@@ -41,17 +33,9 @@
       {
          "entity": "CUSTOM_DEVICE",
          "timeseries":{
-            "key":"virtual_memory_utilisation",
+            "key":"disk_utilisation",
             "unit":"Percent",
-            "displayname":"Memory utilisation - virtual"
-         }
-      },
-      {
-         "entity": "CUSTOM_DEVICE",
-         "timeseries":{
-            "key":"other_memory_utilisation",
-            "unit":"Percent",
-            "displayname":"Memory utilisation - other"
+            "displayname":"Disk utilisation"
          }
       },
       {
