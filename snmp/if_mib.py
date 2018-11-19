@@ -1,4 +1,4 @@
-from poller import Poller
+from snmp.poller import Poller
 
 class IFMIB():
 	poller = None

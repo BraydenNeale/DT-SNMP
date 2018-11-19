@@ -1,5 +1,5 @@
-from host_resource_mib import HostResourceMIB
-from if_mib import IFMIB
+from snmp.host_resource_mib import HostResourceMIB
+from snmp.if_mib import IFMIB
 import configparser
 
 def test_query():
