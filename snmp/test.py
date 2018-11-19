@@ -11,7 +11,11 @@ def test_query():
    authentication = _validate_authentication(config)
 
    hr_mib = HostResourceMIB(device, authentication)
-   hr_mib.poll_metrics()
+   host_metrics = hr_mib.poll_metrics()
+
+   print('cpu = {}'.format(host_metrics['cpu']))
+   print('memory = {}'.format(host_metrics['memory']))
+   print('disk = {}'.format(host_metrics['disk']))
 
    #if_mib = IFMIB(device, authentication)
    #if_mib.poll_metrics()
