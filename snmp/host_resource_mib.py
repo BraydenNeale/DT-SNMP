@@ -1,4 +1,5 @@
 from poller import Poller
+import operator
 
 class HostResourceMIB():
 	poller = None
@@ -7,10 +8,10 @@ class HostResourceMIB():
 	mib_name = 'HOST-RESOURCES-MIB'
 	mib_metrics = [
 	    'hrProcessorLoad', # CPU Utilisation
-	    #'hrStorageType',
-	    #'hrStorageDescr',
-	    #'hrStorageSize',
-	    #'hrStorageUsed',
+	    'hrStorageType',
+	    'hrStorageDescr',
+	    'hrStorageSize',
+	    'hrStorageUsed',
 	]
 
 	cpu_usage = 'hrProcessorLoad'
@@ -58,8 +59,15 @@ class HostResourceMIB():
 		print(average_cpu)
 
 	def _calculate_cpu(self, cpu_index):
-		# TODO handle state where list contains EndofMib objects
-		return sum(cpu_index) / float(len(cpu_index))
+		# Filter out EndOfMibView
+		cpu = []
+		for index in cpu_index:
+			try:
+				cpu.append(operator.index(index))
+			except TypeError:
+				pass
+		    
+		return sum(cpu) / float(len(cpu))
 
 	def _calculate_memory(self, physical_memory, virtual_memory):
 		pass
