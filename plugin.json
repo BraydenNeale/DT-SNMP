@@ -10,7 +10,7 @@
    "source":{
       "package":"custom_snmp_base_plugin_remote",
       "className":"CustomSnmpBasePluginRemote",
-      "install_requires": ["pysnmp>=4.4.6", "requests>=2.6.0"],
+      "install_requires": ["pysnmp>=4.4.6", "pysnmp-mibs>=0.1.6", "requests>=2.6.0"],
       "activation":"Remote"
    },
    "metrics":[
