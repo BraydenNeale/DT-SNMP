@@ -28,7 +28,7 @@ def _validate_device(config):
     # Default port
     port = 161
     # If entered as 127.0.0.1:1234, extract the ip and the port
-    split_host = hostname.split(":")
+    split_host = hostname.split(':')
     if len(split_host) > 1:
         hostname = split_host[0]
         port = split_host[1]
@@ -36,8 +36,8 @@ def _validate_device(config):
     # Check inputs are valid...
 
     device = {
-        "host": hostname,
-        "port": int(port)
+        'host': hostname,
+        'port': int(port)
     }
 
     return device
@@ -53,15 +53,15 @@ def _validate_authentication(config):
     # Check inputs are valid...
 
     authentication = {
-        "version": int(snmp_version),
-        "user": snmp_user,
-        "auth": {
-            "protocol": auth_protocol,
-            "key": auth_key
+        'version': int(snmp_version),
+        'user': snmp_user,
+        'auth': {
+            'protocol': auth_protocol,
+            'key': auth_key
         },
-        "priv": {
-            "protocol": priv_protocol,
-            "key": priv_key
+        'priv': {
+            'protocol': priv_protocol,
+            'key': priv_key
         }
     }
 

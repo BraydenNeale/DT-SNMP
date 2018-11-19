@@ -33,7 +33,7 @@ class Poller():
         gen = getCmd(
             SnmpEngine(),
             self.auth_object,
-            UdpTransportTarget((self.device["host"], self.device["port"])),
+            UdpTransportTarget((self.device['host'], self.device['port'])),
             ContextData(),
             ObjectType(ObjectIdentity(oid)))
         return next(gen)
@@ -52,7 +52,7 @@ class Poller():
         gen = bulkCmd(
             SnmpEngine(),
             self.auth_object,
-            UdpTransportTarget((self.device["host"], self.device["port"])),
+            UdpTransportTarget((self.device['host'], self.device['port'])),
             ContextData(),
             non_repeaters,
             max_repetitions,             
@@ -63,14 +63,14 @@ class Poller():
 
     def _build_auth_object(self):
         authentication = self.authentication
-        if (authentication["version"] == 3):
+        if (authentication['version'] == 3):
             self.auth_object = UsmUserData(
-                authentication["user"],
-                authentication["auth"]["key"],
-                authentication["priv"]["key"],
-                self.auth_protocols.get(authentication["auth"]["protocol"], None),
-                self.priv_protocols.get(authentication["priv"]["protocol"], None))
-        elif(authentication["version"] == 2):
-            self.auth_object = CommunityData(authentication["user"], mpModel=1)
-        elif(authentication["version"] == 1):
-            self.auth_object = CommunityData(authentication["user"], mpModel=0)
+                authentication['user'],
+                authentication['auth']['key'],
+                authentication['priv']['key'],
+                self.auth_protocols.get(authentication['auth']['protocol'], None),
+                self.priv_protocols.get(authentication['priv']['protocol'], None))
+        elif(authentication['version'] == 2):
+            self.auth_object = CommunityData(authentication['user'], mpModel=1)
+        elif(authentication['version'] == 1):
+            self.auth_object = CommunityData(authentication['user'], mpModel=0)
