@@ -1,5 +1,3 @@
-#from dtmon.dtmonitoringsnmp import DTSNMPMonitoring
-
 import random
 import json
 import logging
@@ -9,7 +7,9 @@ import socket
 import _thread
 import time
 from requests.auth import HTTPBasicAuth
-#from pysnmp.hlapi import *
+
+from snmp.host_resource_mib import HostResourceMIB
+from snmp.if_mib import IFMIB
 
 import ruxit.api.selectors
 from ruxit.api.base_plugin import RemoteBasePlugin
