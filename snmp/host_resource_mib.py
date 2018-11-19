@@ -6,15 +6,6 @@ class HostResourceMIB():
 	oids = None
 
 	mib_name = 'HOST-RESOURCES-MIB'
-	mib_metrics = [
-	    'hrProcessorLoad', # CPU Utilisation
-	    'hrStorageType',
-	    'hrStorageDescr',
-	    'hrStorageSize',
-	    'hrStorageUsed',
-	]
-
-	cpu_usage = 'hrProcessorLoad'
 
 	storage_types = {
 		'physical_memory': {
@@ -29,22 +20,26 @@ class HostResourceMIB():
 
 	def __init__(self, device, authentication):
 		self.poller = Poller(device, authentication)
-		self.oids = [(self.mib_name, metric) for metric in self.mib_metrics]
 
 
 	def poll_metrics(self):
-		gen = self.poller.snmp_connect_bulk(self.oids)
-		self._process_result(gen)
+		self._poll_cpu()
+		self._poll_storage()
 
-	def _process_result(self,gen):
-		cpu_index_list = []
-		physical_memory = []
-		virtual_memory = []
-		disks = []
+	def _poll_cpu(self):
+		cpu_metrics = [
+		    'hrProcessorLoad',
+		]
 
+		oids = [(self.mib_name, metric) for metric in cpu_metrics]
+		gen = self.poller.snmp_connect_bulk(oids)
+		self._process_cpu(gen)
+
+	def _process_cpu(self,gen):
+		count = 0
+		total = 0
 		for item in gen:
 			errorIndication, errorStatus, errorIndex, varBinds = item
-
 			if errorIndication:
 			    print(errorIndication)
 			elif errorStatus:
@@ -52,22 +47,40 @@ class HostResourceMIB():
 			                        errorIndex and varBinds[int(errorIndex) - 1][0] or '?'))
 			else:
 			    for name,value in varBinds:
-			    	if self.cpu_usage in name.prettyPrint():
-			    		cpu_index_list.append(value)
+			    	count += 1
+			    	total += value
 
-		average_cpu = self._calculate_cpu(cpu_index_list)
-		print(average_cpu)
+		print(total / float(count))
 
-	def _calculate_cpu(self, cpu_index):
-		# Filter out EndOfMibView
-		cpu = []
-		for index in cpu_index:
-			try:
-				cpu.append(operator.index(index))
-			except TypeError:
-				pass
-		    
-		return sum(cpu) / float(len(cpu))
+	def _poll_storage(self):
+		storage_metrics = [
+		    'hrStorageDescr',
+		    'hrStorageSize',
+		    'hrStorageUsed',
+		]
+		oids = [(self.mib_name, metric) for metric in storage_metrics]
+		gen = self.poller.snmp_connect_bulk(oids)
+
+		self._process_storage(gen)
+
+	def _process_storage(self,gen):
+		storage = []
+		for item in gen:
+			errorIndication, errorStatus, errorIndex, varBinds = item
+			if errorIndication:
+			    print(errorIndication)
+			elif errorStatus:
+			    print('%s at %s' % (errorStatus.prettyPrint(),
+			                        errorIndex and varBinds[int(errorIndex) - 1][0] or '?'))
+			else:
+				index = {}
+				index['desc'] = varBinds[0][1]
+				index['size'] = varBinds[1][1]
+				index['used'] = varBinds[2][1]
+				storage.append(index)
+		
+		for index in storage:
+			print("{} - {} - {}".format(index['desc'], index['size'], index['used']))
 
 	def _calculate_memory(self, physical_memory, virtual_memory):
 		pass
