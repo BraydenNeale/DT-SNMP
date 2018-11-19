@@ -1,5 +1,4 @@
 from poller import Poller
-import operator
 
 class HostResourceMIB():
 	poller = None
@@ -80,7 +79,8 @@ class HostResourceMIB():
 				storage.append(index)
 		
 		for index in storage:
-			print("{} - {} - {}".format(index['desc'], index['size'], index['used']))
+			utilisation = (index['used'] / float(index['size']))*100
+			print("{} - {}%".format(index['desc'], utilisation))
 
 	def _calculate_memory(self, physical_memory, virtual_memory):
 		pass
