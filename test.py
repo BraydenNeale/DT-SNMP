@@ -3,22 +3,22 @@ from snmp.if_mib import IFMIB
 import configparser
 
 def test_query():
-   config = configparser.SafeConfigParser()
-   config_path = './example.ini'
-   config.read(config_path)
+    config = configparser.SafeConfigParser()
+    config_path = './example.ini'
+    config.read(config_path)
 
-   device = _validate_device(config)
-   authentication = _validate_authentication(config)
+    device = _validate_device(config)
+    authentication = _validate_authentication(config)
 
-   hr_mib = HostResourceMIB(device, authentication)
-   host_metrics = hr_mib.poll_metrics()
+    hr_mib = HostResourceMIB(device, authentication)
+    host_metrics = hr_mib.poll_metrics()
+    for key,value in host_metrics.items():
+        print('{} = {}'.format(key, value))
 
-   print('cpu = {}'.format(host_metrics['cpu']))
-   print('memory = {}'.format(host_metrics['memory']))
-   print('disk = {}'.format(host_metrics['disk']))
-
-   if_mib = IFMIB(device, authentication)
-   if_mib.poll_metrics()
+    if_mib = IFMIB(device, authentication)
+    if_metrics = if_mib.poll_metrics()
+    for key,value in if_metrics.items():
+        print('{} = {}'.format(key, value))
 
 def _validate_device(config):
     hostname = config.get('device','hostname')
