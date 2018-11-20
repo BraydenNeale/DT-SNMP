@@ -1,7 +1,24 @@
 from snmp.poller import Poller
 
 class HostResourceMIB():
-	poller = None
+	"""
+	Metric processing for Host-Resouce-Mib
+	Host infrastructure statistics
+
+	This is supported by most device types 
+
+	Reference
+	http://www.net-snmp.org/docs/mibs/host.html
+
+	Usage
+	hr_mib = HostResourceMIB(device, authentication)
+	host_metrics = hr_mib.poll_metrics()
+
+	Returns a dictionary containing values for:
+	cpu, memory, disk
+
+	TODO implement disk splits
+	"""
 
 	mib_name = 'HOST-RESOURCES-MIB'
 

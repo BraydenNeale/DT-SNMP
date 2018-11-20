@@ -1,9 +1,25 @@
 from snmp.poller import Poller
 
 class IFMIB():
-	poller = None
-	oids = None
+	"""
+	Metric processing for IF-MIB
+	Interface network statistics 
 
+	This is supported by most device types
+
+	Reference
+	http://www.net-snmp.org/docs/mibs/interfaces.html
+	http://cric.grenoble.cnrs.fr/Administrateurs/Outils/MIBS/?oid=1.3.6.1.2.1.31.1.1.1
+
+	Usage
+	if_mib = IFMIB(device, authentication)
+	if_metrics = if_mib.poll_metrics()
+
+	Returns a dictionary containing values for:
+	incoming_traffic, outgoing_traffic, inbound_error_rate,
+	outbound_error_rate, inbound_loss_rate, outbound_loss_rate
+	"""
+	
 	mib_name = 'IF-MIB'
 	mib_metrics = [
 		'ifSpeed', # Bandwidth
@@ -20,9 +36,6 @@ class IFMIB():
 	    'ifHCOutBroadcastPkts',
 	    'ifHCOutMulticastPkts',
 	]
-	# Mib reference
-	# http://cric.grenoble.cnrs.fr/Administrateurs/Outils/MIBS/?oid=1.3.6.1.2.1.31.1.1.1
-	# http://www.net-snmp.org/docs/mibs/interfaces.html
 
 	def __init__(self, device, authentication):
 		self.poller = Poller(device, authentication)

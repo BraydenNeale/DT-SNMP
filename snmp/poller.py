@@ -1,6 +1,19 @@
 from pysnmp.hlapi import *
 
 class Poller():
+    """
+    snmp.Poller
+    This module wraps the pysnmp APIs to connect to a device
+
+    Usage
+    poller = new Poller
+    gen = self.poller.snmp_connect_bulk(self.oids)
+
+    You can then iterate through the generator:
+    for item in gen:
+        errorIndication, errorStatus, errorIndex, varBinds = item
+    """
+    
     auth_protocols = {
         'md5': usmHMACMD5AuthProtocol,
         'sha': usmHMACSHAAuthProtocol,
@@ -26,6 +39,11 @@ class Poller():
         self._build_auth_object()
 
     def snmp_connect(self, oid):
+        """
+        Only use for old SNMP agents
+        Prefer snmp_connect_bulk in all cases
+        Send an snmp get request
+        """
         gen = getCmd(
             SnmpEngine(),
             self.auth_object,
@@ -35,6 +53,17 @@ class Poller():
         return next(gen)
 
     def snmp_connect_bulk(self, oids):
+        """
+        Optimised get - supported with SNMPv2C
+        Send a single getbulk request
+        Supported inputs:
+        String - e.g. 1.3.6.1.2.1.31.1.1.1
+        Tuple - e.g. (IF-MIB, ifSpeed)
+        List of Tuple - e.g. ([(IF-MIB,ifSpeed), (HOST-RESOURCES-MIB,cpu)])
+
+        Recommended to only call with lists of OIDs from the same table
+        Otherwise you can end up polling for End of MIB.
+        """
         non_repeaters = 0
         max_repetitions = 25
 

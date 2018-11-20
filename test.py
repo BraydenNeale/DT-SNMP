@@ -2,6 +2,12 @@ from snmp.host_resource_mib import HostResourceMIB
 from snmp.if_mib import IFMIB
 import configparser
 
+
+"""
+Test script designed to match the flow of custom_snmp_base_plugin_remote.py
+Used to test snmp classes without requiring a build/package of the extension
+Usage python test.py
+"""
 def test_query():
     config = configparser.SafeConfigParser()
     config_path = './example.ini'
