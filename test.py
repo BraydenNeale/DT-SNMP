@@ -17,8 +17,8 @@ def test_query():
    print('memory = {}'.format(host_metrics['memory']))
    print('disk = {}'.format(host_metrics['disk']))
 
-   #if_mib = IFMIB(device, authentication)
-   #if_mib.poll_metrics()
+   if_mib = IFMIB(device, authentication)
+   if_mib.poll_metrics()
 
 def _validate_device(config):
     hostname = config.get('device','hostname')
