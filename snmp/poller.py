@@ -1,10 +1,6 @@
 from pysnmp.hlapi import *
 
 class Poller():
-    device = {}
-    authentication = {}
-    auth_object = None
-
     auth_protocols = {
         'md5': usmHMACMD5AuthProtocol,
         'sha': usmHMACSHAAuthProtocol,
