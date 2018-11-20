@@ -43,33 +43,27 @@ class CustomSnmpBasePluginRemote(RemoteBasePlugin):
         hr_mib = HostResourceMIB(device, authentication)
         host_metrics = hr_mib.poll_metrics()
 
-        # TODO
-        # if_mib = IFMIB(device, authentication)
-        # if_metrics = if_mib.poll_metrics()
+        if_mib = IFMIB(device, authentication)
+        if_metrics = if_mib.poll_metrics()
 
-        # Test Plugin
-        data = {}
-        data['cpu_utilisation'] = host_metrics['cpu']
-        data['memory_utilisation'] = host_metrics['memory']
-        data['disk_utilisation'] = random.randint(0,101)
-        data['incoming_traffic'] = random.randint(0,100001)
-        data['outgoing_traffic'] = random.randint(0,100001)
-        data['inbound_error_rate'] = random.randint(0,101)
-        data['outbound_error_rate'] = random.randint(0,101)
-        data['inbound_loss_rate'] = random.randint(0,101)
-        data['outbound_loss_rate'] = random.randint(0,101)
-
-        # TODO handle dimensions - see official extension code
+        # Dimensions pull back too many custom metrics...
+        # I could restrict to known disks e.g. /, /var... 
+        # ...or a user option to hit all disks + interfaces
         #e1.absolute(key = metric['name'], value = split['result'], dimensions = split['dimensions'])
 
-        for key,value in data.items():
+        # Host resource Mib are all utilisation %s
+        for key,value in host_metrics.items():
             e1.absolute(key=key, value=value)
+
+        # IF-Mib are all counter values
+        for key,value in if_metrics.items():
+            e1.relative(key=key, value=value)
 
 # Helper methods
 def _validate_device(config):
-    hostname = config['hostname']
-    group_name = config['group']
-    device_type = config['type']
+    hostname = config.get('hostname')
+    group_name = config.get('group')
+    device_type = config.get('type')
 
     # Default port
     port = 161
@@ -91,12 +85,12 @@ def _validate_device(config):
     return device
 
 def _validate_authentication(config):
-    snmp_version = config['snmp_version']
-    snmp_user = config['snmp_user']
-    auth_protocol = config['auth_protocol']
-    auth_key = config['auth_key']
-    priv_protocol = config['priv_protocol']
-    priv_key = config['priv_key']
+    snmp_version = config.get('snmp_version')
+    snmp_user = config.get('snmp_user')
+    auth_protocol = config.get('auth_protocol')
+    auth_key = config.get('auth_key')
+    priv_protocol = config.get('priv_protocol')
+    priv_key = config.get('priv_key')
 
     # Check inputs are valid...
 
