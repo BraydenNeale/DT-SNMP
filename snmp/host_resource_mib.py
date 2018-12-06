@@ -32,7 +32,7 @@ class HostResourceMIB():
 		metrics = {
 			'cpu': cpu,
 			'memory': memory,
-			'disk': disk,
+			#'disk': disk,
 		}
 
 		return metrics

@@ -51,6 +51,7 @@ class CustomSnmpBasePluginRemote(RemoteBasePlugin):
         # ...or a user option to hit all disks + interfaces
         #e1.absolute(key = metric['name'], value = split['result'], dimensions = split['dimensions'])
 
+        _log_values(logger, host_metrics, if_metrics)
         # Host resource Mib are all utilisation %s
         for key,value in host_metrics.items():
             e1.absolute(key=key, value=value)
@@ -62,8 +63,8 @@ class CustomSnmpBasePluginRemote(RemoteBasePlugin):
 # Helper methods
 def _validate_device(config):
     hostname = config.get('hostname')
-    group_name = config.get('group')
-    device_type = config.get('type')
+    group = config.get('group')
+    device_type = config.get('device_type')
 
     # Default port
     port = 161
@@ -110,13 +111,39 @@ def _validate_authentication(config):
     return authentication
     
 def _log_inputs(logger, device, authentication):
-    for key,value in device:
+    for key,value in device.items():
         logger.info('{} - {}'.format(key,value))
-    for key,value in authentication:
+    for key,value in authentication.items():
         logger.info('{} - {}'.format(key,value))
 
+def _log_values(logger, host_metrics, if_metrics):
+    for key,value in host_metrics.items():
+        logger.info('{} - {}'.format(key,value))
+    for key,value in if_metrics.items():
+        logger.info('{} - {}'.format(key,value))
+
+#####           #####
+# CLASS IMPORTS
+#####           #####
 class HostResourceMIB():
-    poller = None
+    """
+    Metric processing for Host-Resouce-Mib
+    Host infrastructure statistics
+
+    This is supported by most device types 
+
+    Reference
+    http://www.net-snmp.org/docs/mibs/host.html
+
+    Usage
+    hr_mib = HostResourceMIB(device, authentication)
+    host_metrics = hr_mib.poll_metrics()
+
+    Returns a dictionary containing values for:
+    cpu, memory, disk
+
+    TODO implement disk splits
+    """
 
     mib_name = 'HOST-RESOURCES-MIB'
 
@@ -130,7 +157,7 @@ class HostResourceMIB():
         metrics = {
             'cpu': cpu,
             'memory': memory,
-            'disk': disk,
+            #'disk': disk,
         }
 
         return metrics
@@ -200,9 +227,25 @@ class HostResourceMIB():
         return memory, storage
 
 class IFMIB():
-    poller = None
-    oids = None
+    """
+    Metric processing for IF-MIB
+    Interface network statistics 
 
+    This is supported by most device types
+
+    Reference
+    http://www.net-snmp.org/docs/mibs/interfaces.html
+    http://cric.grenoble.cnrs.fr/Administrateurs/Outils/MIBS/?oid=1.3.6.1.2.1.31.1.1.1
+
+    Usage
+    if_mib = IFMIB(device, authentication)
+    if_metrics = if_mib.poll_metrics()
+
+    Returns a dictionary containing values for:
+    incoming_traffic, outgoing_traffic, inbound_error_rate,
+    outbound_error_rate, inbound_loss_rate, outbound_loss_rate
+    """
+    
     mib_name = 'IF-MIB'
     mib_metrics = [
         'ifSpeed', # Bandwidth
@@ -219,9 +262,6 @@ class IFMIB():
         'ifHCOutBroadcastPkts',
         'ifHCOutMulticastPkts',
     ]
-    # Mib reference
-    # http://cric.grenoble.cnrs.fr/Administrateurs/Outils/MIBS/?oid=1.3.6.1.2.1.31.1.1.1
-    # http://www.net-snmp.org/docs/mibs/interfaces.html
 
     def __init__(self, device, authentication):
         self.poller = Poller(device, authentication)
@@ -320,3 +360,107 @@ class IFMIB():
         }
 
         return metrics
+
+class Poller():
+    """
+    snmp.Poller
+    This module wraps the pysnmp APIs to connect to a device
+
+    Usage
+    poller = new Poller
+    gen = self.poller.snmp_connect_bulk(self.oids)
+
+    You can then iterate through the generator:
+    for item in gen:
+        errorIndication, errorStatus, errorIndex, varBinds = item
+    """
+    
+    auth_protocols = {
+        'md5': usmHMACMD5AuthProtocol,
+        'sha': usmHMACSHAAuthProtocol,
+        'sha224': usmHMAC128SHA224AuthProtocol,
+        'sha256': usmHMAC192SHA256AuthProtocol,
+        'sha384': usmHMAC256SHA384AuthProtocol,
+        'sha512': usmHMAC384SHA512AuthProtocol,
+        'noauth': usmNoAuthProtocol
+    }
+
+    priv_protocols = {
+        'des': usmDESPrivProtocol,
+        '3des': usm3DESEDEPrivProtocol,
+        'aes': usmAesCfb128Protocol,
+        'aes192': usmAesCfb192Protocol,
+        'aes256': usmAesCfb256Protocol,
+        'nopriv': usmNoPrivProtocol
+    }
+
+    def __init__(self, device, authentication):
+        self.authentication = authentication
+        self.device = device
+        self._build_auth_object()
+
+    def snmp_connect(self, oid):
+        """
+        Only use for old SNMP agents
+        Prefer snmp_connect_bulk in all cases
+        Send an snmp get request
+        """
+        gen = getCmd(
+            SnmpEngine(),
+            self.auth_object,
+            UdpTransportTarget((self.device['host'], self.device['port'])),
+            ContextData(),
+            ObjectType(ObjectIdentity(oid)))
+        return next(gen)
+
+    def snmp_connect_bulk(self, oids):
+        """
+        Optimised get - supported with SNMPv2C
+        Send a single getbulk request
+        Supported inputs:
+        String - e.g. 1.3.6.1.2.1.31.1.1.1
+        Tuple - e.g. (IF-MIB, ifSpeed)
+        List of Tuple - e.g. ([(IF-MIB,ifSpeed), (HOST-RESOURCES-MIB,cpu)])
+
+        Recommended to only call with lists of OIDs from the same table
+        Otherwise you can end up polling for End of MIB.
+        """
+        non_repeaters = 0
+        max_repetitions = 25
+
+        if (isinstance(oids, str)):
+            oid_object = [ObjectType(ObjectIdentity(oids))]
+        elif (isinstance(oids, tuple)):
+            oid_object = [ObjectType(ObjectIdentity(*oids))]
+        elif(isinstance(oids, list)): # List of Tuple
+            oid_object = [ObjectType(ObjectIdentity(*oid)) for oid in oids]
+
+        gen = bulkCmd(
+            SnmpEngine(),
+            self.auth_object,
+            UdpTransportTarget((self.device['host'], self.device['port'])),
+            ContextData(),
+            non_repeaters,
+            max_repetitions,             
+            *oid_object,
+            lexicographicMode=False)
+
+        return gen
+
+    def _build_auth_object(self):
+        authentication = self.authentication
+        if (authentication['version'] == 3):
+            self.auth_object = UsmUserData(
+                authentication['user'],
+                authentication['auth']['key'],
+                authentication['priv']['key'],
+                self.auth_protocols.get(authentication['auth']['protocol'], None),
+                self.priv_protocols.get(authentication['priv']['protocol'], None))
+        elif(authentication['version'] == 2):
+            self.auth_object = CommunityData(authentication['user'], mpModel=1)
+        elif(authentication['version'] == 1):
+            self.auth_object = CommunityData(authentication['user'], mpModel=0)
+
+
+
+
