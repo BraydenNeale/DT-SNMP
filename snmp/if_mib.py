@@ -1,4 +1,4 @@
-from poller import Poller
+from .poller import Poller
 
 class IFMIB():
 	"""
