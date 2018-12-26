@@ -1,7 +1,6 @@
-from snmp.host_resource_mib import HostResourceMIB
-from snmp.if_mib import IFMIB
-import configparser
-
+from host_resource_mib import HostResourceMIB
+from if_mib import IFMIB
+import json
 
 """
 Test script designed to match the flow of custom_snmp_base_plugin_remote.py
@@ -9,9 +8,12 @@ Used to test snmp classes without requiring a build/package of the extension
 Usage python test.py
 """
 def test_query():
-    config = configparser.SafeConfigParser()
-    config_path = './example.ini'
-    config.read(config_path)
+    # config = configparser.SafeConfigParser()
+    # config_path = './example.ini'
+    # config.read(config_path)
+
+    with open('properties.json') as fp:
+        config = json.load(fp)
 
     device = _validate_device(config)
     authentication = _validate_authentication(config)
@@ -27,9 +29,9 @@ def test_query():
         print('{} = {}'.format(key, value))
 
 def _validate_device(config):
-    hostname = config.get('device','hostname')
-    group_name = config.get('device', 'group')
-    device_type = config.get('device', 'type')
+    hostname = config.get('hostname')
+    group_name = config.get('group')
+    device_type = config.get('device_type')
 
     # Default port
     port = 161
@@ -49,12 +51,12 @@ def _validate_device(config):
     return device
 
 def _validate_authentication(config):
-    snmp_version = config.get('authentication', 'version')
-    snmp_user = config.get('authentication', 'user')
-    auth_protocol = config.get('authentication', 'auth_protocol', fallback=None)
-    auth_key = config.get('authentication', 'auth_key', fallback=None)
-    priv_protocol = config.get('authentication', 'priv_protocol', fallback=None)
-    priv_key = config.get('authentication', 'priv_key', fallback=None)
+    snmp_version = config.get('snmp_version')
+    snmp_user = config.get('snmp_user')
+    auth_protocol = config.get('auth_protocol', None)
+    auth_key = config.get('auth_key', None)
+    priv_protocol = config.get('priv_protocol', None)
+    priv_key = config.get('priv_key', None)
 
     # Check inputs are valid...
 
