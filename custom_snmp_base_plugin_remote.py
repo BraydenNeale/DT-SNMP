@@ -42,21 +42,29 @@ class CustomSnmpBasePluginRemote(RemoteBasePlugin):
         host_metrics = hr_mib.poll_metrics()
 
         if_mib = IFMIB(device, authentication)
-        if_metrics = if_mib.poll_metrics()
+        interfaces = if_mib.poll_metrics()
 
         # Dimensions pull back too many custom metrics...
         # I could restrict to known disks e.g. /, /var... 
         # ...or a user option to hit all disks + interfaces
         #e1.absolute(key = metric['name'], value = split['result'], dimensions = split['dimensions'])
 
-        _log_values(logger, host_metrics, if_metrics)
+        _log_values(logger, host_metrics, interfaces)
+
         # Host resource Mib are all utilisation %s
         for key,value in host_metrics.items():
             e1.absolute(key=key, value=value)
 
         # IF-Mib are all counter values
-        for key,value in if_metrics.items():
-            e1.relative(key=key, value=value)
+        # for interface in interfaces:
+        #     for key,value in interface.items():
+        #         # TODO Add Dimension splits
+        #         e1.relative(key=key, value=value)
+
+        # Lets just look at interface 1
+        if interfaces:
+            for key,value in interfaces[0].items():
+                e1.relative(key=key, value=value)
 
 # Helper methods
 def _validate_device(config):
@@ -114,8 +122,12 @@ def _log_inputs(logger, device, authentication):
     for key,value in authentication.items():
         logger.info('{} - {}'.format(key,value))
 
-def _log_values(logger, host_metrics, if_metrics):
+def _log_values(logger, host_metrics, interfaces):
+    # Host resource
     for key,value in host_metrics.items():
         logger.info('{} - {}'.format(key,value))
-    for key,value in if_metrics.items():
-        logger.info('{} - {}'.format(key,value))
+
+    # Interface - network
+    for interface in interfaces:
+        for key,value in interface.items():
+           logger.info('{} - {}'.format(key,value))

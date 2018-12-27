@@ -24,9 +24,10 @@ def test_query():
         print('{} = {}'.format(key, value))
 
     if_mib = IFMIB(device, authentication)
-    if_metrics = if_mib.poll_metrics()
-    for key,value in if_metrics.items():
-        print('{} = {}'.format(key, value))
+    interfaces = if_mib.poll_metrics()
+    for interface in interfaces:
+        for key,value in interface.items():
+            print('{} = {}'.format(key, value))
 
 def _validate_device(config):
     hostname = config.get('hostname')

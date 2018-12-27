@@ -30,8 +30,8 @@ class HostResourceMIB():
 		memory, disk = self._poll_storage()
 
 		metrics = {
-			'cpu': cpu,
-			'memory': memory,
+			'cpu_utilisation': cpu,
+			'memory_utilisation': memory,
 			#'disk': disk,
 		}
 
