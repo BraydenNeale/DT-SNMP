@@ -27,12 +27,12 @@ class HostResourceMIB():
 
 	def poll_metrics(self):
 		cpu = self._poll_cpu()
-		memory, disks = self._poll_storage()
+		memory, disk = self._poll_storage()
 
 		metrics = {
 			'cpu_utilisation': cpu,
 			'memory_utilisation': memory,
-			'disk_utilisation': disks
+			'disk_utilisation': disk
 		}
 
 		return metrics
@@ -76,7 +76,7 @@ class HostResourceMIB():
 
 	def _process_storage(self,gen):
 		memory = []
-		disks = []
+		disk = []
 		for item in gen:
 			errorIndication, errorStatus, errorIndex, varBinds = item
 			if errorIndication:
@@ -97,6 +97,6 @@ class HostResourceMIB():
 				if 'memory' in name.lower():
 					memory.append(storage)
 				else:
-					disks.append(storage)
+					disk.append(storage)
 		
-		return memory, disks
+		return memory, disk
