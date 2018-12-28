@@ -26,8 +26,11 @@ def test_query():
     if_mib = IFMIB(device, authentication)
     interfaces = if_mib.poll_metrics()
     for interface in interfaces:
+        split = interface['index']
         for key,value in interface.items():
-            print('{} = {}'.format(key, value))
+            if key == 'index':
+                continue
+            print('Index{}: {} = {}'.format(split,key, value))
 
 def _validate_device(config):
     hostname = config.get('hostname')

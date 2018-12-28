@@ -43,7 +43,8 @@
          "timeseries":{
             "key":"incoming_traffic",
             "unit":"Byte",
-            "displayname":"Incoming traffic"
+            "displayname":"Incoming traffic",
+            "dimensions": ["Interface"]
          }
       },
       {
@@ -51,7 +52,8 @@
          "timeseries":{
             "key":"outgoing_traffic",
             "unit":"Byte",
-            "displayname":"Outgoing traffic"
+            "displayname":"Outgoing traffic",
+            "dimensions": ["Interface"]
          }
       },
       {
@@ -59,7 +61,8 @@
          "timeseries":{
             "key":"incoming_packets",
             "unit":"Count",
-            "displayname":"Incoming packets"
+            "displayname":"Incoming packets",
+            "dimensions": ["Interface"]
          }
       },
       {
@@ -67,7 +70,8 @@
          "timeseries":{
             "key":"outgoing_packets",
             "unit":"Count",
-            "displayname":"Outgoing packets"
+            "displayname":"Outgoing packets",
+            "dimensions": ["Interface"]
          }
       },
       {
@@ -75,7 +79,8 @@
          "timeseries":{
             "key":"incoming_errors",
             "unit":"Count",
-            "displayname":"Incoming Errors"
+            "displayname":"Incoming Errors",
+            "dimensions": ["Interface"]
          }
       },
       {
@@ -83,7 +88,8 @@
          "timeseries":{
             "key":"outgoing_errors",
             "unit":"Count",
-            "displayname":"Outgoing errors"
+            "displayname":"Outgoing errors",
+            "dimensions": ["Interface"]
          }
       },
       {
@@ -91,7 +97,8 @@
          "timeseries":{
             "key":"incoming_discards",
             "unit":"Count",
-            "displayname":"Incoming discarded packets"
+            "displayname":"Incoming discarded packets",
+            "dimensions": ["Interface"]
          }
       },
       {
@@ -99,7 +106,8 @@
          "timeseries":{
             "key":"outgoing_discards",
             "unit":"Count",
-            "displayname":"Outgoing discarded packets"
+            "displayname":"Outgoing discarded packets",
+            "dimensions": ["Interface"]
          }
       }
    ],

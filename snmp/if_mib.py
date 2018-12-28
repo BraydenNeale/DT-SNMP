@@ -59,9 +59,8 @@ class IFMIB():
 			    print('%s at %s' % (errorStatus.prettyPrint(),
 			                        errorIndex and varBinds[int(errorIndex) - 1][0] or '?'))
 			else:
-				# TODO handle wrapping when counter32/counter64 overflows
 				interface = self._calculate_interface_split(varBinds)
-				interface['index'] = index
+				interface['index'] = str(index)
 				interfaces.append(interface)
 
 		return interfaces

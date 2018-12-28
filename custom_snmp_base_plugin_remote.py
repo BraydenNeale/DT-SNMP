@@ -56,15 +56,13 @@ class CustomSnmpBasePluginRemote(RemoteBasePlugin):
             e1.absolute(key=key, value=value)
 
         # IF-Mib are all counter values
-        # for interface in interfaces:
-        #     for key,value in interface.items():
-        #         # TODO Add Dimension splits
-        #         e1.relative(key=key, value=value)
+        for interface in interfaces:
+            split = {'Interface': interface['index']}
+            for key,value in interface.items():
+                if key == 'index':
+                    continue
+                e1.relative(key=key, value=value, dimensions=split)
 
-        # Lets just look at interface 1
-        if interfaces:
-            for key,value in interfaces[0].items():
-                e1.relative(key=key, value=value)
 
 # Helper methods
 def _validate_device(config):
