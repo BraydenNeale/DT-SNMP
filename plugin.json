@@ -1,6 +1,6 @@
 {
    "name":"custom.remote.python.snmp-base",
-   "version":"0.101",
+   "version":"0.102",
    "type":"python",
    "requiredAgentVersion": "1.101.0",
    "entity":"CUSTOM_DEVICE",
@@ -27,7 +27,7 @@
          "timeseries":{
             "key":"memory_utilisation",
             "unit":"Percent",
-            "displayname":"Memory utilisation - physical",
+            "displayname":"Memory utilisation",
             "dimensions": ["Storage"]
          }
       },
