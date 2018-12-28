@@ -27,7 +27,8 @@
          "timeseries":{
             "key":"memory_utilisation",
             "unit":"Percent",
-            "displayname":"Memory utilisation - physical"
+            "displayname":"Memory utilisation - physical",
+            "dimensions": ["Storage"]
          }
       },
       {
@@ -35,7 +36,8 @@
          "timeseries":{
             "key":"disk_utilisation",
             "unit":"Percent",
-            "displayname":"Disk utilisation"
+            "displayname":"Disk utilisation",
+            "dimensions": ["Storage"]
          }
       },
       {

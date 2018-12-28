@@ -28,6 +28,7 @@ class CustomSnmpBasePluginRemote(RemoteBasePlugin):
         else:
             logger.setLevel(logging.WARNING)
 
+        # Ensure our inputs are valid
         device = _validate_device(config)
         authentication = _validate_authentication(config)
         _log_inputs(logger, device, authentication)
@@ -38,22 +39,29 @@ class CustomSnmpBasePluginRemote(RemoteBasePlugin):
         e1_name = '{0} - {1}'.format(device['type'], device['host'])
         e1 = g1.create_element(e1_name, e1_name)
         
+        # Poll for snmp metrics
         hr_mib = HostResourceMIB(device, authentication)
         host_metrics = hr_mib.poll_metrics()
 
         if_mib = IFMIB(device, authentication)
         interfaces = if_mib.poll_metrics()
 
-        # Dimensions pull back too many custom metrics...
-        # I could restrict to known disks e.g. /, /var... 
-        # ...or a user option to hit all disks + interfaces
-        #e1.absolute(key = metric['name'], value = split['result'], dimensions = split['dimensions'])
+        #TODO Disk filters
+        #TODO Interface filters
 
         _log_values(logger, host_metrics, interfaces)
 
+        # Send metrics and dimensions through to DT
+
         # Host resource Mib are all utilisation %s
-        for key,value in host_metrics.items():
-            e1.absolute(key=key, value=value)
+        for endpoint,metrics in host_metrics.items():
+            if isinstance(metrics, list):
+                for metric in metrics:
+                    for name,value in metric.items():
+                        split = {'Storage': name}
+                        e1.absolute(key=endpoint, value=value, dimensions=split)
+            else:
+                e1.absolute(key=endpoint, value=metrics)
 
         # IF-Mib are all counter values
         for interface in interfaces:
@@ -122,8 +130,13 @@ def _log_inputs(logger, device, authentication):
 
 def _log_values(logger, host_metrics, interfaces):
     # Host resource
-    for key,value in host_metrics.items():
-        logger.info('{} - {}'.format(key,value))
+    for endpoint,metrics in host_metrics.items():
+        if isinstance(metrics, list):
+            for metric in metrics:
+                for name,value in metric.items():
+                    logger.info('{}: {} = {}'.format(endpoint, name, value))
+        else:
+            logger.info('{} = {}'.format(endpoint, metrics))
 
     # Interface - network
     for interface in interfaces:
