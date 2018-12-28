@@ -57,33 +57,49 @@
       {
          "entity": "CUSTOM_DEVICE",
          "timeseries":{
-            "key":"inbound_error_rate",
-            "unit":"Percent",
-            "displayname":"Inbound error rate"
+            "key":"incoming_packets",
+            "unit":"Count",
+            "displayname":"Incoming packets"
          }
       },
       {
          "entity": "CUSTOM_DEVICE",
          "timeseries":{
-            "key":"outbound_error_rate",
-            "unit":"Percent",
-            "displayname":"outbound error rate"
+            "key":"outgoing_packets",
+            "unit":"Count",
+            "displayname":"Outgoing packets"
          }
       },
       {
          "entity": "CUSTOM_DEVICE",
          "timeseries":{
-            "key":"inbound_loss_rate",
-            "unit":"Percent",
-            "displayname":"Inbound loss rate"
+            "key":"incoming_errors",
+            "unit":"Count",
+            "displayname":"Incoming Errors"
          }
       },
       {
          "entity": "CUSTOM_DEVICE",
          "timeseries":{
-            "key":"outbound_loss_rate",
-            "unit":"Percent",
-            "displayname":"Outbound loss rate"
+            "key":"outgoing_errors",
+            "unit":"Count",
+            "displayname":"Outgoing errors"
+         }
+      },
+      {
+         "entity": "CUSTOM_DEVICE",
+         "timeseries":{
+            "key":"incoming_discards",
+            "unit":"Count",
+            "displayname":"Incoming discarded packets"
+         }
+      },
+      {
+         "entity": "CUSTOM_DEVICE",
+         "timeseries":{
+            "key":"outgoing_discards",
+            "unit":"Count",
+            "displayname":"Outgoing discarded packets"
          }
       }
    ],

@@ -76,35 +76,17 @@ class IFMIB():
 		#interface['bandwidth'] = varBinds[0][1]
 		interface['incoming_traffic'] = varBinds[1][1]
 		interface['outgoing_traffic'] = varBinds[2][1]
-
-		incoming_errors = varBinds[3][1]
-		outgoing_errors = varBinds[4][1]
-		incoming_discards = varBinds[5][1]
-		outgoing_discards = varBinds[6][1]
+		interface['incoming_errors'] = varBinds[3][1]
+		interface['outgoing_errors'] = varBinds[4][1]
+		interface['incoming_discards'] = varBinds[5][1]
+		interface['outgoing_discards'] = varBinds[6][1]
 		# Unicast + Broadcast + Multicast
-		incoming_packets = float(varBinds[6][1]) + float(varBinds[7][1]) + float(varBinds[8][1])
-		outgoing_packets = float(varBinds[9][1]) + float(varBinds[10][1]) + float(varBinds[11][1])
-
-		# TODO - DON'T CALCULATE LIKE THIS
-		# INSTEAD SEND ERRORS, DISCARDS, TOTAL PACKETS
-		# DT SERVER WILL DO THE RELATIVE CALCULATIONS
-		# THIS WON'T WORK WITHOUTH COMPARING TO ORIGINAL VALUE
-
-		# Error rate as defined in original script
-		inbound_error_rate = (incoming_errors / incoming_packets)*100
-		outbound_error_rate = (outgoing_errors / outgoing_packets)*100
-
-		# Loss rate as defined in original script
-		inbound_loss_rate = (incoming_discards / incoming_packets)*100
-		outbound_loss_rate = (outgoing_discards / outgoing_packets)*100
-
-		interface['inbound_error_rate'] = inbound_error_rate
-		interface['outbound_error_rate'] = outbound_error_rate
-		interface['inbound_loss_rate'] = inbound_loss_rate
-		interface['outbound_loss_rate'] = outbound_loss_rate
+		interface['incoming_packets'] = int(varBinds[6][1]) + int(varBinds[7][1]) + int(varBinds[8][1])
+		interface['outgoing_packets'] = int(varBinds[9][1]) + int(varBinds[10][1]) + int(varBinds[11][1])
 
 		return interface
 
+	# NOT USED
 	# Usage:
 	# data = {}
 	# self._populate_interface_metrics(varBinds, data)
@@ -124,6 +106,7 @@ class IFMIB():
 		data.setdefault('incoming_mcast', []).append(varBinds[11][1])
 		data.setdefault('outgoing_mcast', []).append(varBinds[12][1])
 
+	# NOT USED
 	def _reduce_interface_metrics(self, data):
 		# Bandwidth is an interface property...
 		# Sum traffic across all interfaces
