@@ -27,12 +27,12 @@ class HostResourceMIB():
 
 	def poll_metrics(self):
 		cpu = self._poll_cpu()
-		memory, disk = self._poll_storage()
+		memory, disks = self._poll_storage()
 
 		metrics = {
 			'cpu_utilisation': cpu,
 			'memory_utilisation': memory,
-			#'disk_utilisation': disk,
+			'disk_utilisation': disks
 		}
 
 		return metrics
@@ -75,9 +75,8 @@ class HostResourceMIB():
 		return self._process_storage(gen)
 
 	def _process_storage(self,gen):
-		storage = []
-		memory_name = 'Physical memory'
-		memory = 0
+		memory = []
+		disks = []
 		for item in gen:
 			errorIndication, errorStatus, errorIndex, varBinds = item
 			if errorIndication:
@@ -86,17 +85,18 @@ class HostResourceMIB():
 			    print('%s at %s' % (errorStatus.prettyPrint(),
 			                        errorIndex and varBinds[int(errorIndex) - 1][0] or '?'))
 			else:
-				index = {}
-				index['descriptor'] = varBinds[0][1].prettyPrint()
-				size = varBinds[1][1]
-				used = varBinds[2][1]
-				index['utilisation'] = (used / float(size))*100
+				name = None
+				for varBind in varBinds:
+					storage = {}
+					name = varBinds[0][1].prettyPrint()
+					size = varBinds[1][1]
+					used = varBinds[2][1]
+					utilisation = (used / float(size))*100
+					storage[name] = utilisation
 
-				if index['descriptor'] == memory_name:
-					memory = index['utilisation']
-					# TODO handle disk splitting
-					break
-				else:	
-					storage.append(index)
+				if 'memory' in name.lower():
+					memory.append(storage)
+				else:
+					disks.append(storage)
 		
-		return memory, storage
+		return memory, disks

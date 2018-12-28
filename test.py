@@ -20,8 +20,14 @@ def test_query():
 
     hr_mib = HostResourceMIB(device, authentication)
     host_metrics = hr_mib.poll_metrics()
-    for key,value in host_metrics.items():
-        print('{} = {}'.format(key, value))
+    
+    for endpoint,metrics in host_metrics.items():
+        if isinstance(metrics, list):
+            for metric in metrics:
+                for name,value in metric.items():
+                    print('{}: {} = {}'.format(endpoint, name, value))
+        else:
+            print('{} = {}'.format(endpoint, metrics))
 
     if_mib = IFMIB(device, authentication)
     interfaces = if_mib.poll_metrics()
