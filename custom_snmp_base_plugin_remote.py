@@ -1,12 +1,4 @@
-import random
-import json
 import logging
-import requests
-import re
-import socket
-import _thread
-import time
-from requests.auth import HTTPBasicAuth
 
 from snmp.host_resource_mib import HostResourceMIB
 from snmp.if_mib import IFMIB
