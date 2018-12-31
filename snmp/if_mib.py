@@ -67,18 +67,26 @@ class IFMIB():
 
 	def _calculate_interface_metrics(self, index, varBinds, metrics):
 		# Ignore bandwidth
-		incoming_traffic = {index: float(varBinds[1][1])}
-		outgoing_traffic = {index: float(varBinds[2][1])}
-		incoming_errors = {index: float(varBinds[3][1])}
-		outgoing_errors = {index: float(varBinds[4][1])}
-		incoming_discards = {index: float(varBinds[5][1])}
-		outgoing_discards = {index: float(varBinds[6][1])}
+		incoming_traffic = {'value': float(varBinds[1][1])}
+		outgoing_traffic = {'value': float(varBinds[2][1])}
+		incoming_errors = {'value': float(varBinds[3][1])}
+		outgoing_errors = {'value': float(varBinds[4][1])}
+		incoming_discards = {'value': float(varBinds[5][1])}
+		outgoing_discards = {'value': float(varBinds[6][1])}
 		# Unicast + Broadcast + Multicast
 		total_incoming = float(varBinds[6][1]) + float(varBinds[7][1]) + float(varBinds[8][1])
 		total_outgoing = float(varBinds[9][1]) + float(varBinds[10][1]) + float(varBinds[11][1])
-		incoming_packets = {index: total_incoming}
-		outgoing_packets = {index: total_outgoing}
+		incoming_packets = {'value': total_incoming}
+		outgoing_packets = {'value': total_outgoing}
 
+		# All metrics are relative
+		# Calculate per interface... so same dimension for each
+		dict_list = [incoming_traffic, outgoing_traffic, incoming_errors, outgoing_errors, incoming_discards, outgoing_discards, incoming_packets, outgoing_packets]
+		for metric_dict in dict_list:
+			metric_dict['number_type'] = 'relative'
+			metric_dict['dimension'] = {'Storage': index}
+
+		# Add this interface to our list so far
 		metrics.setdefault('incoming_traffic', []).append(incoming_traffic)
 		metrics.setdefault('outgoing_traffic', []).append(outgoing_traffic)
 		metrics.setdefault('incoming_errors', []).append(incoming_errors)
@@ -87,3 +95,4 @@ class IFMIB():
 		metrics.setdefault('outgoing_discards', []).append(outgoing_discards)
 		metrics.setdefault('incoming_packets', []).append(incoming_packets)
 		metrics.setdefault('outgoing_packets', []).append(outgoing_packets)
+

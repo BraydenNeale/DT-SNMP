@@ -21,8 +21,8 @@ def test_query():
     hr_mib = HostResourceMIB(device, authentication)
     metric_list.append(hr_mib.poll_metrics())
 
-    #if_mib = IFMIB(device, authentication)
-    #metric_list.append(if_mib.poll_metrics())
+    if_mib = IFMIB(device, authentication)
+    metric_list.append(if_mib.poll_metrics())
 
     _display_metrics(metric_list)
 
