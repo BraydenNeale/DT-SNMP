@@ -70,7 +70,7 @@ class HostResourceMIB():
 			# No dimension is the default and handled gracefully by the SDK
 			cpu['dimension'] = None
 			cpu['value'] = total / count
-			cpu['number_type'] = 'absolute'
+			cpu['is_absolute_number'] = True
 			processors.append(cpu)
 
 		return processors
@@ -107,7 +107,7 @@ class HostResourceMIB():
 					storage = {}
 					storage['dimension'] = {'Storage': name}
 					storage['value'] = utilisation
-					storage['number_type'] = 'absolute'
+					storage['is_absolute_number'] = True
 
 				# Memory metrics as a dimension under memory_utilisation
 				if any(x in name.lower() for x in memory_types):

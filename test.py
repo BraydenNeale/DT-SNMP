@@ -31,7 +31,7 @@ def _display_metrics(metric_list):
     for metric_dict in metric_list:
         for endpoint,metrics in metric_dict.items():
             for metric in metrics:
-                print('Key = {}, Value = {}, Type = {}, Dimension = {}'.format(endpoint, metric['value'], metric['number_type'], metric['dimension']))
+                print('Key = {}, Value = {}, Absolute? = {}, Dimension = {}'.format(endpoint, metric['value'], metric['is_absolute_number'], metric['dimension']))
 
 
 

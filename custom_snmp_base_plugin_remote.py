@@ -47,7 +47,7 @@ class CustomSnmpBasePluginRemote(RemoteBasePlugin):
         for metric_dict in metric_list:
             for endpoint,metrics in metric_dict.items():
                 for metric in metrics:
-                    if metric['number_type'] == 'absolute':
+                    if metric['is_absolute_number']:
                         e1.absolute(key=endpoint, value=metric['value'], dimensions=metric['dimension'])
                     else:
                         e1.relative(key=endpoint, value=metric['value'], dimensions=metric['dimension'])
@@ -113,4 +113,4 @@ def _log_values(logger, metric_list):
     for metric_dict in metric_list:
         for endpoint,metrics in metric_dict.items():
             for metric in metrics:
-                print('Key = {}, Value = {}, Type = {}, Dimension = {}'.format(endpoint, metric['value'], metric['number_type'], metric['dimension']))
+                print('Key = {}, Value = {}, Absolute? = {}, Dimension = {}'.format(endpoint, metric['value'], metric['is_absolute_number'], metric['dimension']))
