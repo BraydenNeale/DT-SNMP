@@ -51,6 +51,7 @@ class HostResourceMIB():
 	def _process_cpu(self,gen):
 		count = 0
 		total = 0
+		processors = []
 		for item in gen:
 			errorIndication, errorStatus, errorIndex, varBinds = item
 			if errorIndication:
@@ -59,12 +60,20 @@ class HostResourceMIB():
 			    logger.error('%s at %s' % (errorStatus.prettyPrint(),
 			                        errorIndex and varBinds[int(errorIndex) - 1][0] or '?'))
 			else:
-				# 1 CPU index per iteration
+				# Calculate average - Not each seperate index
 			    for name, value in varBinds:
 		    		count += 1
 		    		total += float(value)
 
-		return (total / count)
+		if (count > 0):
+			cpu = {}
+			# No dimension is the default and handled gracefully by the SDK
+			cpu['dimension'] = None
+			cpu['value'] = total / count
+			cpu['number_type'] = 'absolute'
+			processors.append(cpu)
+
+		return processors
 
 	def _poll_storage(self):
 		storage_metrics = [
@@ -91,12 +100,14 @@ class HostResourceMIB():
 			else:
 				name = ''
 				for varBind in varBinds:
-					storage = {}
 					name = varBinds[0][1].prettyPrint()
 					size = float(varBinds[1][1])
 					used = float(varBinds[2][1])
 					utilisation = (used / size)*100
-					storage[name] = utilisation
+					storage = {}
+					storage['dimension'] = {'Storage': name}
+					storage['value'] = utilisation
+					storage['number_type'] = 'absolute'
 
 				# Memory metrics as a dimension under memory_utilisation
 				if any(x in name.lower() for x in memory_types):

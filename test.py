@@ -16,21 +16,23 @@ def test_query():
     device = _validate_device(config)
     authentication = _validate_authentication(config)
 
+    metric_list = []
+
     hr_mib = HostResourceMIB(device, authentication)
-    _display_metrics(hr_mib.poll_metrics())
+    metric_list.append(hr_mib.poll_metrics())
 
-    if_mib = IFMIB(device, authentication)
-    _display_metrics(if_mib.poll_metrics())
+    #if_mib = IFMIB(device, authentication)
+    #metric_list.append(if_mib.poll_metrics())
 
-def _display_metrics(metric_dict):
-    #pprint(metric_dict)
-    for endpoint,metrics in metric_dict.items():
-        if isinstance(metrics, list):
+    _display_metrics(metric_list)
+
+def _display_metrics(metric_list):
+    #pprint(metric_list)
+    for metric_dict in metric_list:
+        for endpoint,metrics in metric_dict.items():
             for metric in metrics:
-                for name,value in metric.items():
-                    print('{}: {} = {}'.format(endpoint, name, value))
-        else:
-            print('{} = {}'.format(endpoint, metrics))
+                print('Key = {}, Value = {}, Type = {}, Dimension = {}'.format(endpoint, metric['value'], metric['number_type'], metric['dimension']))
+
 
 
 def _validate_device(config):
