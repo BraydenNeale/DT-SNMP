@@ -62,9 +62,9 @@ class HostResourceMIB():
 				# 1 CPU index per iteration
 			    for name, value in varBinds:
 		    		count += 1
-		    		total += value
+		    		total += float(value)
 
-		return (total / float(count))
+		return (total / count)
 
 	def _poll_storage(self):
 		storage_metrics = [
@@ -93,9 +93,9 @@ class HostResourceMIB():
 				for varBind in varBinds:
 					storage = {}
 					name = varBinds[0][1].prettyPrint()
-					size = varBinds[1][1]
-					used = varBinds[2][1]
-					utilisation = (used / float(size))*100
+					size = float(varBinds[1][1])
+					used = float(varBinds[2][1])
+					utilisation = (used / size)*100
 					storage[name] = utilisation
 
 				# Memory metrics as a dimension under memory_utilisation

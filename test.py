@@ -1,5 +1,6 @@
 import json
 import logging
+from pprint import pprint
 from snmp.host_resource_mib import HostResourceMIB
 from snmp.if_mib import IFMIB
 
@@ -9,11 +10,6 @@ Used to test snmp classes without requiring a build/package of the extension
 Usage python test.py
 """
 def test_query():
-    # config = configparser.SafeConfigParser()
-    # config_path = './example.ini'
-    # config.read(config_path)
-    #logging.basicConfig(level=logging.INFO)
-
     with open('properties.json') as fp:
         config = json.load(fp)
 
@@ -21,9 +17,14 @@ def test_query():
     authentication = _validate_authentication(config)
 
     hr_mib = HostResourceMIB(device, authentication)
-    host_metrics = hr_mib.poll_metrics()
-    
-    for endpoint,metrics in host_metrics.items():
+    _display_metrics(hr_mib.poll_metrics())
+
+    if_mib = IFMIB(device, authentication)
+    _display_metrics(if_mib.poll_metrics())
+
+def _display_metrics(metric_dict):
+    #pprint(metric_dict)
+    for endpoint,metrics in metric_dict.items():
         if isinstance(metrics, list):
             for metric in metrics:
                 for name,value in metric.items():
@@ -31,14 +32,6 @@ def test_query():
         else:
             print('{} = {}'.format(endpoint, metrics))
 
-    if_mib = IFMIB(device, authentication)
-    interfaces = if_mib.poll_metrics()
-    for interface in interfaces:
-        split = interface['index']
-        for key,value in interface.items():
-            if key == 'index':
-                continue
-            print('Index{}: {} = {}'.format(split,key, value))
 
 def _validate_device(config):
     hostname = config.get('hostname')

@@ -49,7 +49,7 @@ class IFMIB():
 		return self._process_result(gen)
 
 	def _process_result(self,gen):
-		interfaces = []
+		metrics = {}
 		index = 0
 		for item in gen:
 			index += 1
@@ -61,31 +61,29 @@ class IFMIB():
 			    logger.error('%s at %s' % (errorStatus.prettyPrint(),
 			                        errorIndex and varBinds[int(errorIndex) - 1][0] or '?'))
 			else:
-				interface = self._calculate_interface_split(varBinds)
-				interface['index'] = str(index)
-				interfaces.append(interface)
+				self._calculate_interface_metrics(str(index), varBinds, metrics)
 
-		return interfaces
+		return metrics
 
-	# A switch can have hundreds of interfaces... can blow away custom metrics
-	# Usage
-	#interfaces = []
-    #interface = self._calculate_interface_split(varBinds)
-	#interfaces.append(interface)
-	def _calculate_interface_split(self,varBinds):
-		interface = {}
-		#interface['bandwidth'] = varBinds[0][1]
-		interface['incoming_traffic'] = varBinds[1][1]
-		interface['outgoing_traffic'] = varBinds[2][1]
-		interface['incoming_errors'] = varBinds[3][1]
-		interface['outgoing_errors'] = varBinds[4][1]
-		interface['incoming_discards'] = varBinds[5][1]
-		interface['outgoing_discards'] = varBinds[6][1]
+	def _calculate_interface_metrics(self, index, varBinds, metrics):
+		# Ignore bandwidth
+		incoming_traffic = {index: float(varBinds[1][1])}
+		outgoing_traffic = {index: float(varBinds[2][1])}
+		incoming_errors = {index: float(varBinds[3][1])}
+		outgoing_errors = {index: float(varBinds[4][1])}
+		incoming_discards = {index: float(varBinds[5][1])}
+		outgoing_discards = {index: float(varBinds[6][1])}
 		# Unicast + Broadcast + Multicast
-		interface['incoming_packets'] = int(varBinds[6][1]) + int(varBinds[7][1]) + int(varBinds[8][1])
-		interface['outgoing_packets'] = int(varBinds[9][1]) + int(varBinds[10][1]) + int(varBinds[11][1])
+		total_incoming = float(varBinds[6][1]) + float(varBinds[7][1]) + float(varBinds[8][1])
+		total_outgoing = float(varBinds[9][1]) + float(varBinds[10][1]) + float(varBinds[11][1])
+		incoming_packets = {index: total_incoming}
+		outgoing_packets = {index: total_outgoing}
 
-		return interface
-
-
-
+		metrics.setdefault('incoming_traffic', []).append(incoming_traffic)
+		metrics.setdefault('outgoing_traffic', []).append(outgoing_traffic)
+		metrics.setdefault('incoming_errors', []).append(incoming_errors)
+		metrics.setdefault('outgoing_errors', []).append(outgoing_errors)
+		metrics.setdefault('incoming_discards', []).append(incoming_discards)
+		metrics.setdefault('outgoing_discards', []).append(outgoing_discards)
+		metrics.setdefault('incoming_packets', []).append(incoming_packets)
+		metrics.setdefault('outgoing_packets', []).append(outgoing_packets)
