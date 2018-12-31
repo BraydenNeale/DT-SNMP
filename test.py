@@ -1,5 +1,7 @@
 import json
 import logging
+from queue import Queue
+from threading import Thread
 from pprint import pprint
 from snmp.host_resource_mib import HostResourceMIB
 from snmp.if_mib import IFMIB
@@ -16,24 +18,30 @@ def test_query():
     device = _validate_device(config)
     authentication = _validate_authentication(config)
 
-    metric_list = []
+    metric_queue = Queue()
+    thread_list = []
+    mib_list = []
 
     hr_mib = HostResourceMIB(device, authentication)
-    metric_list.append(hr_mib.poll_metrics())
-
+    mib_list.append(hr_mib)
     if_mib = IFMIB(device, authentication)
-    metric_list.append(if_mib.poll_metrics())
+    mib_list.append(if_mib)
 
-    _display_metrics(metric_list)
+    for mib in mib_list:
+        t = Thread(target=lambda q,mib: q.put(mib.poll_metrics()), args=([metric_queue, mib]))
+        t.start()
+        thread_list.append(t)
 
-def _display_metrics(metric_list):
-    #pprint(metric_list)
-    for metric_dict in metric_list:
-        for endpoint,metrics in metric_dict.items():
+    for t in thread_list:
+        t.join()
+
+    _display_metrics(metric_queue)
+
+def _display_metrics(metric_queue):
+    while not metric_queue.empty():
+        for endpoint,metrics in metric_queue.get().items():
             for metric in metrics:
                 print('Key = {}, Value = {}, Absolute? = {}, Dimension = {}'.format(endpoint, metric['value'], metric['is_absolute_number'], metric['dimension']))
-
-
 
 def _validate_device(config):
     hostname = config.get('hostname')
