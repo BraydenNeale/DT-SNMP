@@ -1,4 +1,6 @@
 import logging
+from queue import Queue
+from threading import Thread
 
 from snmp.host_resource_mib import HostResourceMIB
 from snmp.if_mib import IFMIB
@@ -32,25 +34,36 @@ class CustomSnmpBasePluginRemote(RemoteBasePlugin):
         e1 = g1.create_element(e1_name, e1_name)
         
         # Poll for snmp metrics
-        metric_list = []
-        #TODO Disk filters
+        metric_queue = Queue()
+        thread_list = []
+        mib_list = []
+
+        # Host Resource MIB - TODO Disk filtering
         hr_mib = HostResourceMIB(device, authentication)
-        metric_list.append(hr_mib.poll_metrics())
+        mib_list.append(hr_mib)
 
-        #TODO Interface filters
+        # IF MIB - TODO Interface filtering
         if_mib = IFMIB(device, authentication)
-        metric_list.append(if_mib.poll_metrics())
+        mib_list.append(if_mib)
 
-        _log_values(logger, metric_list)
+        for mib in mib_list:
+            # Lambda function - so that the thread can write poll_metrics() into the queue
+            t = Thread(target=lambda q,mib: q.put(mib.poll_metrics()), args=([metric_queue, mib]))
+            t.start()
+            thread_list.append(t)
+        for t in thread_list:
+            t.join()
 
         # Send metrics and dimensions through to DT
-        for metric_dict in metric_list:
-            for endpoint,metrics in metric_dict.items():
+        while not metric_queue.empty():
+            for endpoint,metrics in metric_queue.get().items():
                 for metric in metrics:
                     if metric['is_absolute_number']:
                         e1.absolute(key=endpoint, value=metric['value'], dimensions=metric['dimension'])
                     else:
                         e1.relative(key=endpoint, value=metric['value'], dimensions=metric['dimension'])
+
+                    logger.info('Key = {}, Value = {}, Absolute? = {}, Dimension = {}'.format(endpoint, metric['value'], metric['is_absolute_number'], metric['dimension']))
 
 
 # Helper methods
@@ -108,9 +121,3 @@ def _log_inputs(logger, device, authentication):
         logger.info('{} - {}'.format(key,value))
     for key,value in authentication.items():
         logger.info('{} - {}'.format(key,value))
-
-def _log_values(logger, metric_list):
-    for metric_dict in metric_list:
-        for endpoint,metrics in metric_dict.items():
-            for metric in metrics:
-                print('Key = {}, Value = {}, Absolute? = {}, Dimension = {}'.format(endpoint, metric['value'], metric['is_absolute_number'], metric['dimension']))
