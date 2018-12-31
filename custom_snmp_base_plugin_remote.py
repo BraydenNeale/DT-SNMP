@@ -32,36 +32,25 @@ class CustomSnmpBasePluginRemote(RemoteBasePlugin):
         e1 = g1.create_element(e1_name, e1_name)
         
         # Poll for snmp metrics
-        hr_mib = HostResourceMIB(device, authentication)
-        host_metrics = hr_mib.poll_metrics()
-
-        if_mib = IFMIB(device, authentication)
-        interfaces = if_mib.poll_metrics()
-
+        metric_list = []
         #TODO Disk filters
-        #TODO Interface filters
+        hr_mib = HostResourceMIB(device, authentication)
+        metric_list.append(hr_mib.poll_metrics())
 
-        _log_values(logger, host_metrics, interfaces)
+        #TODO Interface filters
+        if_mib = IFMIB(device, authentication)
+        metric_list.append(if_mib.poll_metrics())
+
+        _log_values(logger, metric_list)
 
         # Send metrics and dimensions through to DT
-
-        # Host resource Mib are all utilisation %s
-        for endpoint,metrics in host_metrics.items():
-            if isinstance(metrics, list):
+        for metric_dict in metric_list:
+            for endpoint,metrics in metric_dict.items():
                 for metric in metrics:
-                    for name,value in metric.items():
-                        split = {'Storage': name}
-                        e1.absolute(key=endpoint, value=value, dimensions=split)
-            else:
-                e1.absolute(key=endpoint, value=metrics)
-
-        # IF-Mib are all counter values
-        for interface in interfaces:
-            split = {'Interface': interface['index']}
-            for key,value in interface.items():
-                if key == 'index':
-                    continue
-                e1.relative(key=key, value=value, dimensions=split)
+                    if metric['number_type'] == 'absolute':
+                        e1.absolute(key=endpoint, value=metric['value'], dimensions=metric['dimension'])
+                    else:
+                        e1.relative(key=endpoint, value=metric['value'], dimensions=metric['dimension'])
 
 
 # Helper methods
@@ -120,17 +109,8 @@ def _log_inputs(logger, device, authentication):
     for key,value in authentication.items():
         logger.info('{} - {}'.format(key,value))
 
-def _log_values(logger, host_metrics, interfaces):
-    # Host resource
-    for endpoint,metrics in host_metrics.items():
-        if isinstance(metrics, list):
+def _log_values(logger, metric_list):
+    for metric_dict in metric_list:
+        for endpoint,metrics in metric_dict.items():
             for metric in metrics:
-                for name,value in metric.items():
-                    logger.info('{}: {} = {}'.format(endpoint, name, value))
-        else:
-            logger.info('{} = {}'.format(endpoint, metrics))
-
-    # Interface - network
-    for interface in interfaces:
-        for key,value in interface.items():
-           logger.info('{} - {}'.format(key,value))
+                print('Key = {}, Value = {}, Type = {}, Dimension = {}'.format(endpoint, metric['value'], metric['number_type'], metric['dimension']))

@@ -84,7 +84,7 @@ class IFMIB():
 		dict_list = [incoming_traffic, outgoing_traffic, incoming_errors, outgoing_errors, incoming_discards, outgoing_discards, incoming_packets, outgoing_packets]
 		for metric_dict in dict_list:
 			metric_dict['number_type'] = 'relative'
-			metric_dict['dimension'] = {'Storage': index}
+			metric_dict['dimension'] = {'Interface': index}
 
 		# Add this interface to our list so far
 		metrics.setdefault('incoming_traffic', []).append(incoming_traffic)
