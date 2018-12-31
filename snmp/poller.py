@@ -1,4 +1,7 @@
+import logging
 from pysnmp.hlapi import *
+
+logger = logging.getLogger(__name__)
 
 class Poller():
     """

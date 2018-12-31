@@ -1,6 +1,7 @@
+import json
+import logging
 from snmp.host_resource_mib import HostResourceMIB
 from snmp.if_mib import IFMIB
-import json
 
 """
 Test script designed to match the flow of custom_snmp_base_plugin_remote.py
@@ -11,6 +12,7 @@ def test_query():
     # config = configparser.SafeConfigParser()
     # config_path = './example.ini'
     # config.read(config_path)
+    #logging.basicConfig(level=logging.INFO)
 
     with open('properties.json') as fp:
         config = json.load(fp)
@@ -86,4 +88,5 @@ def _validate_authentication(config):
     return authentication
 
 if __name__ == '__main__':
+    logging.basicConfig(filename='test.log',level=logging.DEBUG)
     test_query()

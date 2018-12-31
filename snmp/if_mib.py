@@ -1,4 +1,7 @@
+import logging
 from .poller import Poller
+
+logger = logging.getLogger(__name__)
 
 class IFMIB():
 	"""
@@ -47,16 +50,15 @@ class IFMIB():
 
 	def _process_result(self,gen):
 		interfaces = []
-		# TODO - HANDLE INTERFACE NAME/INDEX BETTER
 		index = 0
 		for item in gen:
 			index += 1
 			errorIndication, errorStatus, errorIndex, varBinds = item
 
 			if errorIndication:
-			    print(errorIndication)
+			    logger.error(errorIndication)
 			elif errorStatus:
-			    print('%s at %s' % (errorStatus.prettyPrint(),
+			    logger.error('%s at %s' % (errorStatus.prettyPrint(),
 			                        errorIndex and varBinds[int(errorIndex) - 1][0] or '?'))
 			else:
 				interface = self._calculate_interface_split(varBinds)
@@ -84,67 +86,6 @@ class IFMIB():
 		interface['outgoing_packets'] = int(varBinds[9][1]) + int(varBinds[10][1]) + int(varBinds[11][1])
 
 		return interface
-
-	# NOT USED
-	# Usage:
-	# data = {}
-	# self._populate_interface_metrics(varBinds, data)
-	# return self._reduce_interface_metrics(data)
-	def _populate_interface_metrics(self,varBinds, data):
-		data.setdefault('bandwidth', []).append(varBinds[0][1])
-		data.setdefault('incoming_traffic', []).append(varBinds[1][1])
-		data.setdefault('outgoing_traffic', []).append(varBinds[2][1])
-		data.setdefault('incoming_errors', []).append(varBinds[3][1])
-		data.setdefault('outgoing_errors', []).append(varBinds[4][1])
-		data.setdefault('incoming_discards', []).append(varBinds[5][1])
-		data.setdefault('outgoing_discards', []).append(varBinds[6][1])
-		data.setdefault('incoming_ucast', []).append(varBinds[7][1])
-		data.setdefault('outgoing_ucast', []).append(varBinds[8][1])
-		data.setdefault('incoming_bcast', []).append(varBinds[9][1])
-		data.setdefault('outgoing_bcast', []).append(varBinds[10][1])
-		data.setdefault('incoming_mcast', []).append(varBinds[11][1])
-		data.setdefault('outgoing_mcast', []).append(varBinds[12][1])
-
-	# NOT USED
-	def _reduce_interface_metrics(self, data):
-		# Bandwidth is an interface property...
-		# Sum traffic across all interfaces
-		incoming_traffic = sum(data['incoming_traffic'])
-		outgoing_traffic = sum(data['outgoing_traffic'])
-
-		incoming_errors = sum(data['incoming_errors'])
-		outgoing_errors = sum(data['outgoing_errors'])
-		incoming_discards = sum(data['incoming_discards'])
-		outgoing_discards = sum(data['outgoing_discards'])
-		incoming_ucast = sum(data['incoming_ucast'])
-		outgoing_ucast = sum(data['outgoing_ucast'])
-		incoming_bcast = sum(data['incoming_bcast'])
-		outgoing_bcast = sum(data['outgoing_bcast'])
-		incoming_mcast = sum(data['incoming_mcast'])
-		outgoing_mcast = sum(data['outgoing_mcast'])
-
-		incoming_packets = sum([incoming_ucast, incoming_bcast, incoming_mcast])
-		outgoing_packets = sum([outgoing_ucast, outgoing_bcast, outgoing_mcast])
-
-		# Error rate as defined in original script
-		inbound_error_rate = (incoming_errors / incoming_packets)*100
-		outbound_error_rate = (outgoing_errors / outgoing_packets)*100
-
-		# Loss rate as defined in original script
-		inbound_loss_rate = (incoming_discards / incoming_packets)*100
-		outbound_loss_rate = (outgoing_discards / outgoing_packets)*100
-
-		metrics = {
-			'incoming_traffic': incoming_traffic,
-			'outgoing_traffic': outgoing_traffic,
-			'inbound_error_rate': inbound_error_rate,
-			'outbound_error_rate': outbound_error_rate,
-			'inbound_loss_rate': inbound_loss_rate,
-			'outbound_loss_rate': outbound_loss_rate
-		}
-
-		return metrics
-
 
 
 

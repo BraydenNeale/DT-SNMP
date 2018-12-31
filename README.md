@@ -11,7 +11,7 @@ This extension allows Dynatrace to monitor appliances that support standard SNMP
 By default this enables us to monitor device metrics
 * HOST-RESOURCES-MIB
 	- CPU utilisation
-	- Memory utilisation - Physical, Virtual, Cached, Buffers
+	- Memory utilisation - Physical, Virtual, Cached, Buffers, Swap Space
 	- Disk Utilisation
 * IF-MIB
 	- Network Traffic - Incoming/Outgoing

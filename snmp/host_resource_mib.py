@@ -1,4 +1,7 @@
+import logging
 from .poller import Poller
+
+logger = logging.getLogger(__name__)
 
 class HostResourceMIB():
 	"""
@@ -51,12 +54,12 @@ class HostResourceMIB():
 		for item in gen:
 			errorIndication, errorStatus, errorIndex, varBinds = item
 			if errorIndication:
-			    print(errorIndication)
+			    logger.error(errorIndication)
 			elif errorStatus:
-			    print('%s at %s' % (errorStatus.prettyPrint(),
+			    logger.error('%s at %s' % (errorStatus.prettyPrint(),
 			                        errorIndex and varBinds[int(errorIndex) - 1][0] or '?'))
 			else:
-				# 1 index per iteration
+				# 1 CPU index per iteration
 			    for name, value in varBinds:
 		    		count += 1
 		    		total += value
@@ -77,15 +80,16 @@ class HostResourceMIB():
 	def _process_storage(self,gen):
 		memory = []
 		disk = []
+		memory_types = ['memory', 'swap space']
 		for item in gen:
 			errorIndication, errorStatus, errorIndex, varBinds = item
 			if errorIndication:
-			    print(errorIndication)
+			    logger.error(errorIndication)
 			elif errorStatus:
-			    print('%s at %s' % (errorStatus.prettyPrint(),
+			    logger.error('%s at %s' % (errorStatus.prettyPrint(),
 			                        errorIndex and varBinds[int(errorIndex) - 1][0] or '?'))
 			else:
-				name = None
+				name = ''
 				for varBind in varBinds:
 					storage = {}
 					name = varBinds[0][1].prettyPrint()
@@ -94,7 +98,8 @@ class HostResourceMIB():
 					utilisation = (used / float(size))*100
 					storage[name] = utilisation
 
-				if 'memory' in name.lower():
+				# Memory metrics as a dimension under memory_utilisation
+				if any(x in name.lower() for x in memory_types):
 					memory.append(storage)
 				else:
 					disk.append(storage)
