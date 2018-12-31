@@ -39,6 +39,7 @@ def test_query():
 
 def _display_metrics(metric_queue):
     while not metric_queue.empty():
+        #pprint(metric_queue.get())
         for endpoint,metrics in metric_queue.get().items():
             for metric in metrics:
                 print('Key = {}, Value = {}, Absolute? = {}, Dimension = {}'.format(endpoint, metric['value'], metric['is_absolute_number'], metric['dimension']))

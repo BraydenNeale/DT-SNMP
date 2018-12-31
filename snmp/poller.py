@@ -9,8 +9,8 @@ class Poller():
     This module wraps the pysnmp APIs to connect to a device
 
     Usage
-    poller = new Poller
-    gen = self.poller.snmp_connect_bulk(self.oids)
+    poller = Poller(device, authentication)
+    gen = poller.snmp_connect_bulk(self.oids)
 
     You can then iterate through the generator:
     for item in gen:

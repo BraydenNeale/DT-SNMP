@@ -19,25 +19,26 @@ class IFMIB():
 	if_metrics = if_mib.poll_metrics()
 
 	Returns a dictionary containing values for:
-	incoming_traffic, outgoing_traffic, inbound_error_rate,
-	outbound_error_rate, inbound_loss_rate, outbound_loss_rate
+	incoming_traffic, outgoing_traffic, incoming_errors,
+	outgoing_errors, incoming_discards, outgoing_discards,
+	incoming_packets, outgoing_packets
 	"""
 	
 	mib_name = 'IF-MIB'
 	mib_metrics = [
-		'ifSpeed', # Bandwidth
-	    'ifHCInOctets', # Incoming Traffic
-	    'ifHCOutOctets', # Outgoing Traffic,
-	    'ifInErrors', # Incoming errors
-	    'ifOutErrors', # Outgoing errors
-	    'ifInDiscards',
-	    'ifOutDiscards',
-	    'ifHCInUcastPkts',
-	    'ifHCInBroadcastPkts',
-	    'ifHCInMulticastPkts',
-	    'ifHCOutUcastPkts',
-	    'ifHCOutBroadcastPkts',
-	    'ifHCOutMulticastPkts',
+	'ifSpeed', # Bandwidth
+	'ifHCInOctets', # Incoming Traffic
+	'ifHCOutOctets', # Outgoing Traffic,
+	'ifInErrors',
+	'ifOutErrors',
+	'ifInDiscards',
+	'ifOutDiscards',
+	'ifHCInUcastPkts',
+	'ifHCInBroadcastPkts',
+	'ifHCInMulticastPkts',
+	'ifHCOutUcastPkts',
+	'ifHCOutBroadcastPkts',
+	'ifHCOutMulticastPkts',
 	]
 
 	def __init__(self, device, authentication):

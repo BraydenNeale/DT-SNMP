@@ -44,6 +44,7 @@ Once this has been uploaded succesfully you can start to configure monitoring of
 * **SNMP v3 Priv Key** - The device priv password
 * **Name of the group** - Used for grouping devices belonging to a particular business area, domain...
 * **ActiveGate** - The ActiveGate to run this extension polling instance from.
+
 Once configured, you should see an 'Ok' status in the configuration UI and will start to see your device in the Technology overview and metrics availabile for custom charting.
 
 ## Development
@@ -54,7 +55,7 @@ Once configured, you should see an 'Ok' status in the configuration UI and will 
 * requests >= 2.6.0
 
 ### Installation
-Note: the Dynatrace oneagent comes bundled with Python3.6, so make sure to use Python3.6 when running `oneagent_build_plugin` ([Plugin SDK](https://dynatrace.github.io/plugin-sdk/readme.html)]) as it will compile the correct native cryptodome modules.
+Note: the Dynatrace oneagent comes bundled with Python3.6, so make sure to use Python3.6 when running `oneagent_build_plugin` ([Plugin SDK](https://dynatrace.github.io/plugin-sdk/readme.html)) as it will compile the correct native cryptodome modules.
 
 #### Setup
 `python3.6 -m venv dt-snmp` <br>
@@ -86,7 +87,7 @@ class HostResourceMIB():
 class IFMIB():
 	...
 ```
-Also, make sure to remove the snmp/... import statements from the top of the file
+Also, make sure to remove the snmp/... import statements from the top of the file. TODO import local modle...
 ```python
 #from snmp.host_resource_mib import HostResourceMIB
 #from snmp.if_mib import IFMIB
@@ -94,6 +95,143 @@ Also, make sure to remove the snmp/... import statements from the top of the fil
 Finally, to build run:
 `sudo ~/Dev/python/oneagent/bin/oneagent_build_plugin`
 
+#### Adding another MIB
+To add support for another MIB and to poll for additional SNMP metrics, add and import an additional class under the snmp module. It is expected to implement the **poll_metrics** function. Each metric is expected to have the following properties:
+* **value**: The value of the metric (must be convertible to float)
+* **dimension**: A dictionary containing the dimension name and value (Strings): `name: value`. If there is no dimension to split the metric on, then explicitly set this to None as that is handled as default by the SDK.
+* **is_absolute_number**: A boolean, whether or not the metric is absolute or relative
+	- Absolute: Independent, stand alone
+	- Relative: Dependent on previous value e.g. Counter
+
+e.g.
+```python
+class CustomMIB():
+	def __init__(self, device, authentication):
+		self.poller = Poller(device, authentication)
+
+	def poll_metrics(self):
+		metrics = {
+			'metric1': [
+				{
+					'dimension': None
+					'is_absolute_number': True,
+					'value: value'
+				}
+			],
+			'metric2': [
+				{
+					'dimension': {'Name': 'value'}
+					'is_absolute_number': False,
+					'value: value'
+				},
+				{
+					'dimension': {'Name': 'value'}
+					'is_absolute_number': False,
+					'value: value'
+				}
+			]
+		}
+
+		return metrics
+```
+Once defined, you can simply add it to the mib_list in **custom_snmp_base_plugin_remote.py** e.g. 
+```python
+# Custom MIB
+custom_mib = CustomMib(device, authentication)
+mib_list.append(custom_mib)
+```
+e.g. The metric format for Host-Resources-MIB and IF-MIB is:
+```python
+#HOST_RESOURCE_MIB 
+{
+	'cpu_utilisation': [
+		{
+			'dimension': None,
+			'is_absolute_number': True,
+			'value': 11.0
+		}
+	],
+	'disk_utilisation': [
+		{
+			'dimension': {'Storage': '/'}, 
+			'is_absolute_number': True,
+			'value': 77.06483354871978
+		},
+		{
+			'dimension': {'Storage': '/usr/local'},
+			'is_absolute_number': True,
+			'value': 79.05778271288935
+		},
+		...
+	]
+	'memory_utilisation': [
+		{
+			'dimension': {'Storage': 'Physical memory'},
+ 			'is_absolute_number': True,
+ 			'value': 93.7571919497131
+		},
+		{
+			'dimension': {'Storage': 'Virtual memory'},
+			'is_absolute_number': True,
+			'value': 49.03610213914279
+		},
+		...
+	]
+}
+
+# IF_MIB
+{
+	'incoming_traffic': [
+		{
+			'dimension': {'Interface': '1'},
+			'is_absolute_number': False,
+			'value': 415496409580240.0
+		},
+		{
+			'dimension': {'Interface': '2'},
+			'is_absolute_number': False,
+			'value': 321564641040573.0,
+		}
+	],
+	'outgoing_traffic': [
+		{
+			'dimension': {'Interface': '1'},
+			'is_absolute_number': False,
+			'value': 427663219773201.0,
+		}
+		{
+			'dimension': {'Interface': '2'},
+			'is_absolute_number': False,
+			'value': 295719899494783.0
+		}
+	],
+	...
+}
+```
+You must also register your custom metrics by adding them to **plugin.json** under "metrics". e.g.
+```javascript
+"metrics":[
+   {
+      "entity": "CUSTOM_DEVICE",
+      "timeseries":{
+         "key":"cpu_utilisation",
+         "unit":"Percent",
+         "displayname":"CPU utilisation"
+      }
+   },
+   ...
+   {
+      "entity": "CUSTOM_DEVICE",
+      "timeseries":{
+         "key":"incoming_traffic",
+         "unit":"Byte",
+         "displayname":"Incoming traffic",
+         "dimensions": ["Interface"]
+      }
+   },
+   ...
+]
+```
 #### Testing
 To run against the oneagent simulator:<br>
 `~/Dev/python/oneagent/bin/oneagent_sim`
@@ -113,7 +251,7 @@ e.g. `snmpwalk -v3 -l authPriv -u <USER> -a SHA -A <AUTHKEY> -x AES -X <PRIVKEY>
 ## Known Issues
 * **Does not yet work for Windows ActiveGates** - `Error(Cannot load native module 'Cryptodome.Cipher._raw_ecb': Trying '_raw_ecb.cp36-win_amd64.pyd': [WinError 126] The specified module could not be found, Trying '_raw_ecb.pyd': [WinError 126] The specified module could not be found)` The modules exist and are compiled correctly... it may just not be using the correct Cryptodome\Util\Cipher\ path
 * **No proper error handling implemented yet** - Will be testing and refining this against enteprise appliances, switches and servers soon.
-* **Consumes a lot of custom metrics** - I will be adding configuration features to refine Disk and interface dimensions based so that we don't just pull back metrics for 'everything'.
+* **Consumes a lot of custom metrics** - I will be adding configuration features to refine Disk and interface dimensions so that we don't just pull back metrics for 'everything'.
 
 ## Contributors
 * **[Vu Pham](https://github.com/beantoast)** - Wrote the first custom script for this on site using memcached as ActiveGate extensions were not yet available. See [Branch](https://github.com/BraydenNeale/Dynatrace-SNMP/tree/vu_legacy)
