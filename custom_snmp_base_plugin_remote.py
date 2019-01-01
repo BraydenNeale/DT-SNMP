@@ -2,8 +2,8 @@ import logging
 from queue import Queue
 from threading import Thread
 
-from snmp.host_resource_mib import HostResourceMIB
-from snmp.if_mib import IFMIB
+from dtsnmp.host_resource_mib import HostResourceMIB
+from dtsnmp.if_mib import IFMIB
 
 import ruxit.api.selectors
 from ruxit.api.base_plugin import RemoteBasePlugin

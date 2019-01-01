@@ -3,8 +3,8 @@ import logging
 from queue import Queue
 from threading import Thread
 from pprint import pprint
-from snmp.host_resource_mib import HostResourceMIB
-from snmp.if_mib import IFMIB
+from dtsnmp.host_resource_mib import HostResourceMIB
+from dtsnmp.if_mib import IFMIB
 
 """
 Test script designed to match the flow of custom_snmp_base_plugin_remote.py
