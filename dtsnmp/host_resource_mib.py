@@ -89,7 +89,7 @@ class HostResourceMIB():
 	def _process_storage(self,gen):
 		memory = []
 		disk = []
-		memory_types = ['memory', 'swap space']
+		memory_types = ['memory', 'swap space', 'ram']
 		for item in gen:
 			errorIndication, errorStatus, errorIndex, varBinds = item
 			if errorIndication:
