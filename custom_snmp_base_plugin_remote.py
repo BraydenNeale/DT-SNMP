@@ -54,6 +54,8 @@ class CustomSnmpBasePluginRemote(RemoteBasePlugin):
         for t in thread_list:
             t.join()
 
+        # Keep track of the custom metrics consumed
+        custom_metrics = 0
         # Send metrics and dimensions through to DT
         while not metric_queue.empty():
             for endpoint,metrics in metric_queue.get().items():
@@ -63,8 +65,10 @@ class CustomSnmpBasePluginRemote(RemoteBasePlugin):
                     else:
                         e1.relative(key=endpoint, value=metric['value'], dimensions=metric['dimension'])
 
+                    custom_metrics += 1
                     logger.info('Key = {}, Value = {}, Absolute? = {}, Dimension = {}'.format(endpoint, metric['value'], metric['is_absolute_number'], metric['dimension']))
 
+        e1.report_property('Custom metrics', str(custom_metrics))
 
 # Helper methods
 def _validate_device(config):
