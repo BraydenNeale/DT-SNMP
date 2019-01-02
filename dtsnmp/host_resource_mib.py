@@ -103,7 +103,10 @@ class HostResourceMIB():
 					name = varBinds[0][1].prettyPrint()
 					size = float(varBinds[1][1])
 					used = float(varBinds[2][1])
-					utilisation = (used / size)*100
+					utilisation = 0
+					# Division by 0 excpetion - e.g. Swap Space 0 used of 0
+					if size > 0:
+						utilisation = (used / size)*100
 					storage = {}
 					storage['dimension'] = {'Storage': name}
 					storage['value'] = utilisation
