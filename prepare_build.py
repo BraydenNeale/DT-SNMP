@@ -1,5 +1,4 @@
 import fileinput
-import re
 from os import walk
 
 def remove_module_imports(base_file):
