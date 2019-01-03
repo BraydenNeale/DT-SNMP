@@ -8,7 +8,7 @@ from dtsnmp.if_mib import IFMIB
 import ruxit.api.selectors
 from ruxit.api.base_plugin import RemoteBasePlugin
 from ruxit.api.data import PluginMeasurement, PluginProperty, MEAttribute
-from ruxit.api.exceptions import AuthException, ConfigException
+from ruxit.api.exceptions import AuthException, ConfigException, NothingToReportException
 from ruxit.api.events import Event, EventMetadata
 
 logger = logging.getLogger(__name__)
@@ -68,7 +68,10 @@ class CustomSnmpBasePluginRemote(RemoteBasePlugin):
                     custom_metrics += 1
                     logger.info('Key = {}, Value = {}, Absolute? = {}, Dimension = {}'.format(endpoint, metric['value'], metric['is_absolute_number'], metric['dimension']))
 
-        e1.report_property('Custom metrics', str(custom_metrics))
+        if custom_metrics == 0:
+            raise NothingToReportException('No metrics were returned when polling {}:{}'.format(device['host'], device['port']))
+        else:
+            e1.report_property('Custom metrics', str(custom_metrics))
 
 # Helper methods
 def _validate_device(config):
@@ -76,19 +79,32 @@ def _validate_device(config):
     group = config.get('group')
     device_type = config.get('device_type')
 
-    # Default port
+    # Check inputs are valid...
+    if not hostname:
+        raise ConfigException('Hostname must not be empty')
+
+    if not group:
+        raise ConfigException('Group must not be empty')
+
+    if not device_type:
+        raise ConfigException('Device Type must not be empty')
+
+    # Default SNMP port
     port = 161
     # If entered as 127.0.0.1:1234, extract the ip and the port
     split_host = hostname.split(':')
     if len(split_host) > 1:
-        hostname = split_host[0]
+        host = split_host[0]
         port = split_host[1]
 
-    # Check inputs are valid...
+    try:
+        port = int(port)
+    except ValueError:
+        raise ConfigException('Invalid port \'{}\' in hostname input: {}'.format(port, hostname))
 
     device = {
-        'host': hostname,
-        'port': int(port),
+        'host': host,
+        'port': port,
         'type': device_type,
         'group': group
     }
@@ -104,9 +120,35 @@ def _validate_authentication(config):
     priv_key = config.get('priv_key')
 
     # Check inputs are valid...
+    if not snmp_version:
+        raise ConfigException('SNMP Version must not be empty')
+
+    if not snmp_user:
+        raise ConfigException('SNMP User (v3) or Community String (v2) must not be empty')
+
+    # Other values can be None...
+    # V2
+        # Expected and ignored
+    # V3
+        # Match SNMP security level
+        # No Auth or Priv = noAuthNoPriv
+        # Auth no Priv = authNoPriv
+        # Auth + Priv = authPriv
+
+    try:
+        snmp_version = int(snmp_version)
+    except ValueError:
+        raise ConfigException('Expected a number for SNMP Version, received \'{}\''.format(snmp_version))
+
+    if snmp_version == 1:
+        raise ConfigException('SNMP Version 1 not yet? supported')
+    elif not (snmp_version == 2 or snmp_version == 3):
+        raise ConfigException('SNMP Version expected to be 2 or 3, received \'{}\''.format(snmp_version))
+
+    # TODO If auth or priv protocols don't match expected inputs...
 
     authentication = {
-        'version': int(snmp_version),
+        'version': snmp_version,
         'user': snmp_user,
         'auth': {
             'protocol': auth_protocol,
