@@ -13,9 +13,15 @@ def process_metrics(gen, processor=None):
 
             if errorIndication:
                 logger.error(errorIndication)
+                # Return early or we could be stuck timing out hitting each index
+                # TODO handle this more gracefully
+                return metrics
             elif errorStatus:
                 logger.error('%s at %s' % (errorStatus.prettyPrint(),
                                     errorIndex and varBinds[int(errorIndex) - 1][0] or '?'))
+                # Return early or we could be stuck timing out hitting each index
+                # TODO handle this more gracefully
+                return metrics
             else:
                 processor(index=str(index), varBinds=varBinds, metrics=metrics)
 
