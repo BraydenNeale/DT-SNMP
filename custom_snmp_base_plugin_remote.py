@@ -91,6 +91,7 @@ def _validate_device(config):
 
     # Default SNMP port
     port = 161
+    host = hostname
     # If entered as 127.0.0.1:1234, extract the ip and the port
     split_host = hostname.split(':')
     if len(split_host) > 1:
