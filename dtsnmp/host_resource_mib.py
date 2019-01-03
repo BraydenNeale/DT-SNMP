@@ -30,14 +30,17 @@ class HostResourceMIB():
 
 	def poll_metrics(self):
 		cpu = self._poll_cpu()
-		memory, disk = self._poll_storage()
+		storage = self._poll_storage()
+
+		average_cpu = cpu.get('cpu', [])
+		memory = storage.get('memory', [])
+		disk = storage.get('disk', [])
 
 		metrics = {
-			'cpu_utilisation': cpu,
+			'cpu_utilisation': average_cpu,
 			'memory_utilisation': memory,
 			'disk_utilisation': disk
 		}
-
 		return metrics
 
 	def _poll_cpu(self):
@@ -46,34 +49,7 @@ class HostResourceMIB():
 		]
 		oids = [(self.mib_name, metric) for metric in cpu_metrics]
 		gen = self.poller.snmp_connect_bulk(oids)
-		return self._process_cpu(gen)
-
-	def _process_cpu(self,gen):
-		count = 0
-		total = 0
-		processors = []
-		for item in gen:
-			errorIndication, errorStatus, errorIndex, varBinds = item
-			if errorIndication:
-			    logger.error(errorIndication)
-			elif errorStatus:
-			    logger.error('%s at %s' % (errorStatus.prettyPrint(),
-			                        errorIndex and varBinds[int(errorIndex) - 1][0] or '?'))
-			else:
-				# Calculate average - Not each seperate index
-			    for name, value in varBinds:
-		    		count += 1
-		    		total += float(value)
-
-		if (count > 0):
-			cpu = {}
-			# No dimension is the default and handled gracefully by the SDK
-			cpu['dimension'] = None
-			cpu['value'] = total / count
-			cpu['is_absolute_number'] = True
-			processors.append(cpu)
-
-		return processors
+		return self.poller.process_metrics(gen, calculate_cpu_metrics)
 
 	def _poll_storage(self):
 		storage_metrics = [
@@ -83,39 +59,36 @@ class HostResourceMIB():
 		]
 		oids = [(self.mib_name, metric) for metric in storage_metrics]
 		gen = self.poller.snmp_connect_bulk(oids)
+		return self.poller.process_metrics(gen, calculate_storage_metrics)
 
-		return self._process_storage(gen)
+def calculate_cpu_metrics(index, varBinds, metrics):
+	cpu = {}
+	for key,val in varBinds:
+		cpu['value'] = float(val)
 
-	def _process_storage(self,gen):
-		memory = []
-		disk = []
-		memory_types = ['memory', 'swap space', 'ram']
-		for item in gen:
-			errorIndication, errorStatus, errorIndex, varBinds = item
-			if errorIndication:
-			    logger.error(errorIndication)
-			elif errorStatus:
-			    logger.error('%s at %s' % (errorStatus.prettyPrint(),
-			                        errorIndex and varBinds[int(errorIndex) - 1][0] or '?'))
-			else:
-				name = ''
-				for varBind in varBinds:
-					name = varBinds[0][1].prettyPrint()
-					size = float(varBinds[1][1])
-					used = float(varBinds[2][1])
-					utilisation = 0
-					# Division by 0 excpetion - e.g. Swap Space 0 used of 0
-					if size > 0:
-						utilisation = (used / size)*100
-					storage = {}
-					storage['dimension'] = {'Storage': name}
-					storage['value'] = utilisation
-					storage['is_absolute_number'] = True
+	cpu['dimension'] = {'Index': index}
+	cpu['is_absolute_number'] = True
 
-				# Memory metrics as a dimension under memory_utilisation
-				if any(x in name.lower() for x in memory_types):
-					memory.append(storage)
-				else:
-					disk.append(storage)
-		
-		return memory, disk
+	metrics.setdefault('cpu', []).append(cpu)
+
+def calculate_storage_metrics(index, varBinds, metrics):
+	memory_types = ['memory', 'swap space', 'ram']
+	name = ''
+	for varBind in varBinds:
+		name = varBinds[0][1].prettyPrint()
+		size = float(varBinds[1][1])
+		used = float(varBinds[2][1])
+		utilisation = 0
+		# Division by 0 excpetion - e.g. Swap Space 0 used of 0
+		if size > 0:
+			utilisation = (used / size)*100
+		storage = {}
+		storage['dimension'] = {'Storage': name}
+		storage['value'] = utilisation
+		storage['is_absolute_number'] = True
+
+	# Memory metrics as a dimension under memory_utilisation
+	if any(x in name.lower() for x in memory_types):
+		metrics.setdefault('memory', []).append(storage)
+	else:
+		metrics.setdefault('disk', []).append(storage)

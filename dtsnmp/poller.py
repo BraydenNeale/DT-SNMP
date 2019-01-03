@@ -89,6 +89,26 @@ class Poller():
 
         return gen
 
+    def process_metrics(self, gen, processor=None):
+        if not processor:
+            processor = mib_print
+
+        metrics = {}
+        index = 0
+        for item in gen:
+            index += 1
+            errorIndication, errorStatus, errorIndex, varBinds = item
+
+            if errorIndication:
+                logger.error(errorIndication)
+            elif errorStatus:
+                logger.error('%s at %s' % (errorStatus.prettyPrint(),
+                                    errorIndex and varBinds[int(errorIndex) - 1][0] or '?'))
+            else:
+                processor(index=str(index), varBinds=varBinds, metrics=metrics)
+
+        return metrics
+
     def _build_auth_object(self):
         authentication = self.authentication
         if (authentication['version'] == 3):
@@ -102,3 +122,7 @@ class Poller():
             self.auth_object = CommunityData(authentication['user'], mpModel=1)
         elif(authentication['version'] == 1):
             self.auth_object = CommunityData(authentication['user'], mpModel=0)
+
+def mib_print(index, varBinds, metrics):
+    for varBind in varBinds:
+        print(' = '.join([x.prettyPrint() for x in varBind]))
