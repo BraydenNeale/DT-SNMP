@@ -1,5 +1,6 @@
 import logging
 from .poller import Poller
+from .processing import process_metrics, reduce_average
 
 logger = logging.getLogger(__name__)
 
@@ -47,7 +48,7 @@ class IFMIB():
 
 	def poll_metrics(self):
 		gen = self.poller.snmp_connect_bulk(self.oids)
-		return self.poller.process_metrics(gen, calculate_interface_metrics)
+		return process_metrics(gen, calculate_interface_metrics)
 
 def calculate_interface_metrics(index, varBinds, metrics):
 	# Ignore bandwidth

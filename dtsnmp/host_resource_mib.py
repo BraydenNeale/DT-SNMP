@@ -1,5 +1,6 @@
 import logging
 from .poller import Poller
+from .processing import process_metrics, reduce_average
 
 logger = logging.getLogger(__name__)
 
@@ -32,12 +33,12 @@ class HostResourceMIB():
 		cpu = self._poll_cpu()
 		storage = self._poll_storage()
 
-		average_cpu = cpu.get('cpu', [])
+		cpu_utilisation = cpu.get('cpu', [])
 		memory = storage.get('memory', [])
 		disk = storage.get('disk', [])
 
 		metrics = {
-			'cpu_utilisation': average_cpu,
+			'cpu_utilisation': cpu_utilisation,
 			'memory_utilisation': memory,
 			'disk_utilisation': disk
 		}
@@ -49,7 +50,9 @@ class HostResourceMIB():
 		]
 		oids = [(self.mib_name, metric) for metric in cpu_metrics]
 		gen = self.poller.snmp_connect_bulk(oids)
-		return self.poller.process_metrics(gen, calculate_cpu_metrics)
+		cpu_metrics = process_metrics(gen, calculate_cpu_metrics)
+		# Average CPU to reduce custom metrics
+		return reduce_average(cpu_metrics)
 
 	def _poll_storage(self):
 		storage_metrics = [
@@ -59,7 +62,7 @@ class HostResourceMIB():
 		]
 		oids = [(self.mib_name, metric) for metric in storage_metrics]
 		gen = self.poller.snmp_connect_bulk(oids)
-		return self.poller.process_metrics(gen, calculate_storage_metrics)
+		return process_metrics(gen, calculate_storage_metrics)
 
 def calculate_cpu_metrics(index, varBinds, metrics):
 	cpu = {}
@@ -79,7 +82,7 @@ def calculate_storage_metrics(index, varBinds, metrics):
 		size = float(varBinds[1][1])
 		used = float(varBinds[2][1])
 		utilisation = 0
-		# Division by 0 excpetion - e.g. Swap Space 0 used of 0
+		# Division by 0 exception - e.g. Swap Space 0 used of 0
 		if size > 0:
 			utilisation = (used / size)*100
 		storage = {}
@@ -92,3 +95,4 @@ def calculate_storage_metrics(index, varBinds, metrics):
 		metrics.setdefault('memory', []).append(storage)
 	else:
 		metrics.setdefault('disk', []).append(storage)
+
