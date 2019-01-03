@@ -13,7 +13,7 @@ def add_modules_to_base(module_path, base_file):
 	exclude_list = ['__init__.py']
 	skip_line_markers = ('from .', 'import logging', 'logger = logging')
 
-	# Create tuple of all required module files
+	# Get the list of all required module py files
 	in_files = []
 	for (dirpath, dirnames, filenames) in walk(module_path):
 	    in_files.extend(filenames)
@@ -23,16 +23,22 @@ def add_modules_to_base(module_path, base_file):
 		    in_files.remove(exclude)
 		except ValueError:
 		    pass
-	in_files = tuple(module_path + f for f in in_files)
+	in_files = [module_path + f for f in in_files]
 
+	module_boundary_marker = '\n#####\n#LOCAL DTSNMP MODULE\n####\n'
+	# append each module file to the main custom_plugin file
 	with open(base_file, 'a+', newline='') as fout:
-		with fileinput.input(files=in_files) as fin:
-			for line in fin:
-				if not line.startswith(skip_line_markers):
-					fout.write(line)
-
+		fout.write(module_boundary_marker)
+		for in_file in in_files:
+			with open(in_file, 'r') as fin:
+				for line in fin:
+					if not line.startswith(skip_line_markers):
+						fout.write(line)
+				# Add newlines between file cats
+				fout.write('\n\n')
+			
 if __name__ == '__main__':
-	base_file = 'replace.py'
+	base_file = 'custom_snmp_base_plugin_remote.py'
 	module_path = './dtsnmp/'
 	remove_module_imports(base_file)
 	add_modules_to_base(module_path, base_file)
