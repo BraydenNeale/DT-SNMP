@@ -66,29 +66,26 @@ class HostResourceMIB():
 
 def calculate_cpu_metrics(index, varBinds, metrics):
 	cpu = {}
-	for key,val in varBinds:
-		cpu['value'] = float(val)
-
+	cpu['value'] = float(varBinds[0][1])
 	cpu['dimension'] = {'Index': index}
 	cpu['is_absolute_number'] = True
-
 	metrics.setdefault('cpu', []).append(cpu)
 
 def calculate_storage_metrics(index, varBinds, metrics):
 	memory_types = ['memory', 'swap space', 'ram']
-	name = ''
-	for varBind in varBinds:
-		name = varBinds[0][1].prettyPrint()
-		size = float(varBinds[1][1])
-		used = float(varBinds[2][1])
-		utilisation = 0
-		# Division by 0 exception - e.g. Swap Space 0 used of 0
-		if size > 0:
-			utilisation = (used / size)*100
-		storage = {}
-		storage['dimension'] = {'Storage': name}
-		storage['value'] = utilisation
-		storage['is_absolute_number'] = True
+
+	name = varBinds[0][1].prettyPrint()
+	size = float(varBinds[1][1])
+	used = float(varBinds[2][1])
+	utilisation = 0
+	# Division by 0 exception - e.g. Swap Space 0 used of 0
+	if size > 0:
+		utilisation = (used / size)*100
+
+	storage = {}
+	storage['dimension'] = {'Storage': name}
+	storage['value'] = utilisation
+	storage['is_absolute_number'] = True
 
 	# Memory metrics as a dimension under memory_utilisation
 	if any(x in name.lower() for x in memory_types):
