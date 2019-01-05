@@ -64,6 +64,11 @@ class HostResourceMIB():
 		gen = self.poller.snmp_connect_bulk(oids)
 		return process_metrics(gen, calculate_storage_metrics)
 
+"""
+Processing Function to be used with processing.process_metrics
+Extracts the CPU utilisation for each index
+hrProcessorLoad -> varBinds[0]
+"""
 def calculate_cpu_metrics(index, varBinds, metrics):
 	cpu = {}
 	cpu['value'] = float(varBinds[0][1])
@@ -71,6 +76,13 @@ def calculate_cpu_metrics(index, varBinds, metrics):
 	cpu['is_absolute_number'] = True
 	metrics.setdefault('cpu', []).append(cpu)
 
+"""
+Processing Function to be used with processing.process_metrics
+Extracts the storage itilisation - splitting into memory/disk types
+hrStorageDescr -> varBinds[0]
+hrStorageSize -> varBinds[1]
+hrStorageUsed -> varBinds[2]
+"""
 def calculate_storage_metrics(index, varBinds, metrics):
 	memory_types = ['memory', 'swap space', 'ram']
 

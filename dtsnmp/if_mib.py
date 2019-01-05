@@ -50,8 +50,25 @@ class IFMIB():
 		gen = self.poller.snmp_connect_bulk(self.oids)
 		return process_metrics(gen, calculate_interface_metrics)
 
+"""
+Processing Function to be used with processing.process_metrics
+Extracts the following for each interface
+ifSpeed -> varBinds[0] (ignored)
+ifHCInOctets -> varBinds[1]
+ifHCOutOctets -> varBinds[2]
+ifInErrors -> varBinds[3]
+ifOutErrors -> varBinds[4]
+ifInDiscards -> varBinds[5]
+ifOutDiscards -> varBinds[6]
+ifHCInUcastPkts -> varBinds[7]
+ifHCInBroadcastPkts -> varBinds[8]
+ifHCInMulticastPkts -> varBinds[9]
+ifHCOutUcastPkts -> varBinds[10]
+ifHCOutBroadcastPkts -> varBinds[11]
+ifHCOutMulticastPkts -> varBinds[12]
+"""
 def calculate_interface_metrics(index, varBinds, metrics):
-	# Ignore bandwidth
+	#bandwidth = {'value': float(varBinds[0][1])}
 	incoming_traffic = {'value': float(varBinds[1][1])}
 	outgoing_traffic = {'value': float(varBinds[2][1])}
 	incoming_errors = {'value': float(varBinds[3][1])}
@@ -59,8 +76,8 @@ def calculate_interface_metrics(index, varBinds, metrics):
 	incoming_discards = {'value': float(varBinds[5][1])}
 	outgoing_discards = {'value': float(varBinds[6][1])}
 	# Unicast + Broadcast + Multicast
-	total_incoming = float(varBinds[6][1]) + float(varBinds[7][1]) + float(varBinds[8][1])
-	total_outgoing = float(varBinds[9][1]) + float(varBinds[10][1]) + float(varBinds[11][1])
+	total_incoming = float(varBinds[7][1]) + float(varBinds[8][1]) + float(varBinds[9][1])
+	total_outgoing = float(varBinds[10][1]) + float(varBinds[11][1]) + float(varBinds[12][1])
 	incoming_packets = {'value': total_incoming}
 	outgoing_packets = {'value': total_outgoing}
 

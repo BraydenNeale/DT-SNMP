@@ -58,45 +58,26 @@ Once configured, you should see an 'Ok' status in the configuration UI and will 
 Note: the Dynatrace oneagent comes bundled with Python3.6, so make sure to use Python3.6 when running `oneagent_build_plugin` ([Plugin SDK](https://dynatrace.github.io/plugin-sdk/readme.html)) as it will compile the correct native cryptodome modules.
 
 #### Setup
-`python3.6 -m venv dt-snmp` <br>
-`source dt-snmp/bin/activate` <br>
+`python3.6 -m venv dtsnmp` <br>
+`source dtsnmp/bin/activate` <br>
 `pip install -r requirements.txt` <br>
 Download the Dynatrace plugin SDK from your Dynatrace Environment <br>
 `pip install plugin_sdk-1.157.168.20181127.170441-py3-none-any.whl`
 
 #### Building
-Files and directories are stipped out when the plugin is built. Because of this the local snmp module gets wiped. I am working out how to bundle this in as a required dependency.
-Currently, before building it is required to copy each of the snmp classes - **Poller**, **HostResourceMIB** and **IFMIB** into the main **custom_snmp_base_plugin.py** file.
-Make sure to maintain the pysnmp import from Poller. <br>
-e.g. custom_snmp_base_plugin_remote.py will resemble
-```python
-from ... import
-# ...
+1. `prepare_build.py` - add dtsnmp module (see below)
+2. `sudo .../dtsnmp/bin/oneagent_build_plugin` - sdk build
 
-class CustomSnmpBasePluginRemote(RemoteBasePlugin):
-	...
+Files and directories are stipped out when the plugin is built, this wipes the local dtsnmp module. I am working out how to bundle this in as a required dependency. <br>
 
-from pysnmp.hlapi import *
+Currently, before building it is required to copy each of the dtsnmp module files (classes, functions...) - **Poller**, **HostResourceMIB**, **processing** and **IFMIB** into the main **custom_snmp_base_plugin.py** file. <br>
+`prepare_build.py` Exists to automate this task, it will also backup the main extension python file.
 
-class Poller():
-	...
-
-class HostResourceMIB():
-	...
-
-class IFMIB():
-	...
-```
-Also, make sure to remove the snmp/... import statements from the top of the file. TODO import local modle...
-```python
-#from snmp.host_resource_mib import HostResourceMIB
-#from snmp.if_mib import IFMIB
-```
-Finally, to build run:
-`sudo ~/Dev/python/oneagent/bin/oneagent_build_plugin`
+Finally, to build run the SDK command: `sudo .../dtsnmp/bin/oneagent_build_plugin` <br>
+This will fetch dependencies in plugin.json, compile and bundle everything together under: **/opt/dynatrace/remotepluginmodule/plugin_deployment/custom.remote.python.snmp-base.zip** - Linux
 
 #### Adding another MIB
-To add support for another MIB and to poll for additional SNMP metrics, add and import an additional class under the snmp module. It is expected to implement the **poll_metrics** function. Each metric is expected to have the following properties:
+To add support for another MIB and to poll for additional SNMP metrics, add and import an additional class under the dtsnmp module. It is expected to implement the **poll_metrics** function. Each metric is expected to have the following properties:
 * **value**: The value of the metric (must be convertible to float)
 * **dimension**: A dictionary containing the dimension name and value (Strings): `name: value`. If there is no dimension to split the metric on, then explicitly set this to None as that is handled as default by the SDK.
 * **is_absolute_number**: A boolean, whether or not the metric is absolute or relative
@@ -208,6 +189,8 @@ e.g. The metric format for Host-Resources-MIB and IF-MIB is:
 	...
 }
 ```
+You can Create an instance of the **Poller** class to handle SNMP connections and call **process_metrics** in **processing.py** with a custom function for metric extraction and calculations.
+
 You must also register your custom metrics by adding them to **plugin.json** under "metrics". e.g.
 ```javascript
 "metrics":[
@@ -234,12 +217,12 @@ You must also register your custom metrics by adding them to **plugin.json** und
 ```
 #### Testing
 To run against the oneagent simulator:<br>
-`~/Dev/python/oneagent/bin/oneagent_sim`
+`.../dtsnmp/bin/oneagent_sim`
 
 To print the SNMP MIB class metrics collected <br>
 `python test.py` <br>
 
-#### You can test against a public endpoints with [snmplabs](http://snmplabs.com/snmpsim/public-snmp-agent-simulator.html)
+#### You can test against public endpoints with [snmplabs](http://snmplabs.com/snmpsim/public-snmp-agent-simulator.html)
 properties.json is already configured to hit demo.snmplabs.com with SNMP version 2<br>
 **Testing snmp access and support via the snmpwalk command**<br>
 e.g. `snmpwalk -v3 -l authPriv -u <USER> -a SHA -A <AUTHKEY> -x AES -X <PRIVKEY> demo.snmplabs.com` <br>
@@ -250,7 +233,7 @@ e.g. `snmpwalk -v3 -l authPriv -u <USER> -a SHA -A <AUTHKEY> -x AES -X <PRIVKEY>
 
 ## Known Issues
 * **Does not yet work for Windows ActiveGates** - `Error(Cannot load native module 'Cryptodome.Cipher._raw_ecb': Trying '_raw_ecb.cp36-win_amd64.pyd': [WinError 126] The specified module could not be found, Trying '_raw_ecb.pyd': [WinError 126] The specified module could not be found)` The modules exist and are compiled correctly... it may just not be using the correct Cryptodome\Util\Cipher\ path
-* **No proper error handling implemented yet** - Will be testing and refining this against enteprise appliances, switches and servers soon.
+* **Thread exception handling** - When a thread enounters an exception it will just log (in most cases) and return an empty Dictionary to main. This should be handled more gracefully.
 * **Consumes a lot of custom metrics** - I will be adding configuration features to refine Disk and interface dimensions so that we don't just pull back metrics for 'everything'.
 
 ## Contributors

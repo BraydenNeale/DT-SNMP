@@ -3,7 +3,17 @@ import logging
 logger = logging.getLogger(__name__)
 
 """ 
-Processing functions
+General processing and helper functions
+"""
+
+"""
+Build a metric dictionary from an snmp connection generator
+Args:
+    Gen - A generator returned from Poller.snmp_connect_bulk
+    Processor - a procesing function for each index (default is to just print)
+        index - The current iteration through the generator
+        varBinds - The variable bindings from snmpget on an object descriptor - name,value
+        metrics - The dictionary of metric endpoints to populate
 """
 def process_metrics(gen, processor=None):
         if not processor:
@@ -31,10 +41,20 @@ def process_metrics(gen, processor=None):
 
         return metrics
 
+"""
+Display in the same format as snmpwalk.
+Ripped straight from http://snmplabs.com/pysnmp/quick-start.html
+"""
 def mib_print(index, varBinds, metrics):
     for varBind in varBinds:
         print(' = '.join([x.prettyPrint() for x in varBind]))
 
+"""
+Reducer function to manage custom_metric overload.
+Takes a metric dictionary and averages the metrics under each endpoint
+Dimensions are then ignored and set to None
+TODO - take the reducer as an arg to support sum, count, median...
+"""
 def reduce_average(metric_dict):
 	average_metrics = {}
 	for endpoint,metrics in metric_dict.items():
