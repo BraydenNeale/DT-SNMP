@@ -1,6 +1,6 @@
 {
    "name":"custom.remote.python.snmp-base",
-   "version":"0.103",
+   "version":"0.105",
    "type":"python",
    "requiredAgentVersion": "1.101.0",
    "entity":"CUSTOM_DEVICE",
@@ -113,6 +113,200 @@
          }
       }
    ],
+   "ui": {
+      "keymetrics" : [
+         {
+            "key": "cpu_utilisation",
+            "displayname": "CPU utilisation"
+         },
+            {
+            "key": "incoming_traffic",
+            "displayname": "Incoming traffic"
+         }
+      ],
+      "keycharts": [
+         {
+            "group": "Host-Resource-MIB",
+            "title": "Average CPU utilisation",
+            "series": [
+               {
+                  "key": "cpu_utilisation",
+                  "displayname": "CPU utilisation"
+               }
+            ]
+         },
+         {
+            "group": "Host-Resource-MIB",
+            "title": "Average memory utilisation",
+            "series": [
+               {
+                  "key": "memory_utilisation",
+                  "displayname": "Memory utilisation",
+                  "mergeaggregation": "AVG"
+               }
+            ]
+         },
+         {
+            "group": "Host-Resource-MIB",
+            "title": "Average disk utilisation",
+            "series": [
+               {
+                  "key": "disk_utilisation",
+                  "displayname": "Disk utilisation",
+                  "mergeaggregation": "AVG"
+               }
+            ]
+         },
+         {
+            "group": "IF-MIB",
+            "title": "Total incoming traffic",
+            "series": [
+               {
+                  "key": "incoming_traffic",
+                  "displayname": "Incoming traffic",
+                  "mergeaggregation": "SUM"
+               }
+            ]
+         },
+         {
+            "group": "IF-MIB",
+            "title": "Total incoming packets",
+            "series": [
+               {
+                  "key": "incoming_packets",
+                  "displayname": "Incoming packets",
+                  "mergeaggregation": "SUM"
+               }
+            ]
+         },
+         {
+            "group": "IF-MIB",
+            "title": "Total incoming errors",
+            "series": [
+               {
+                  "key": "incoming_traffic",
+                  "displayname": "Incoming errors",
+                  "mergeaggregation": "SUM"
+               }
+            ]
+         },
+         {
+            "group": "IF-MIB",
+            "title": "Total outgoing traffic",
+            "series": [
+               {
+                  "key": "outgoing_traffic",
+                  "displayname": "Outgoing traffic",
+                  "mergeaggregation": "SUM"
+               }
+            ]
+         },
+         {
+            "group": "IF-MIB",
+            "title": "Total outgoing packets",
+            "series": [
+               {
+                  "key": "outgoing_packets",
+                  "displayname": "Outgoing packets",
+                  "mergeaggregation": "SUM"
+               }
+            ]
+         },
+         {
+            "group": "IF-MIB",
+            "title": "Total outgoing errors",
+            "series": [
+               {
+                  "key": "outgoing_errors",
+                  "displayname": "Outgoing errors",
+                  "mergeaggregation": "SUM"
+               }
+            ]
+         }
+      ],
+      "charts": [
+         {
+            "group": "Host-Resource-MIB",
+            "title": "CPU utilisation",
+            "series": [
+               {
+                  "key": "cpu_utilisation",
+                  "displayname": "CPU utilisation"
+               }
+            ]
+         },
+         {
+            "group": "Host-Resource-MIB",
+            "title": "Memory utilisation",
+            "series": [
+               {
+                  "key": "memory_utilisation",
+                  "displayname": "Memory utilisation"
+               }
+            ]
+         },
+         {
+            "group": "Host-Resource-MIB",
+            "title": "Disk utilisation",
+            "series": [
+               {
+                  "key": "disk_utilisation",
+                  "displayname": "Disk utilisation"
+               }
+            ]
+         },
+         {
+            "group": "IF-MIB",
+            "title": "Incoming network traffic",
+            "series": [
+               {
+                  "key": "incoming_traffic",
+                  "displayname": "Incoming traffic"
+               },
+               {
+                  "key": "incoming_packets",
+                  "displayname": "Incoming packets",
+                  "seriestype": "line"
+               },
+               {
+                  "key": "incoming_errors",
+                  "displayname": "Incoming errors",
+                  "seriestype": "line"
+               },
+               {
+                  "key": "incoming_discards",
+                  "displayname": "Incoming discards",
+                  "seriestype": "line"
+               }
+            ]
+         },
+         {
+            "group": "IF-MIB",
+            "title": "Outgoing network traffic",
+            "series": [
+               {
+                  "key": "outgoing_traffic",
+                  "displayname": "Outgoing traffic"
+               },
+               {
+                  "key": "outgoing_packets",
+                  "displayname": "Outgoing packets",
+                  "seriestype": "line"
+               },
+               {
+                  "key": "outgoing_errors",
+                  "displayname": "Outgoing errors",
+                  "seriestype": "line"
+               },
+               {
+                  "key": "outgoing_discards",
+                  "displayname": "Outgoing discards",
+                  "seriestype": "line"
+               }
+            ]
+         }
+      ]
+   },
    "properties": [
       {
          "key": "device_type",
