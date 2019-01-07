@@ -19,10 +19,9 @@ def process_metrics(gen, processor=None):
         if not processor:
             processor = mib_print
 
+        #processor = debug_print
         metrics = {}
-        index = 0
         for item in gen:
-            index += 1
             errorIndication, errorStatus, errorIndex, varBinds = item
 
             if errorIndication:
@@ -37,7 +36,7 @@ def process_metrics(gen, processor=None):
                 # TODO handle this more gracefully
                 return metrics
             else:
-                processor(index=str(index), varBinds=varBinds, metrics=metrics)
+                processor(varBinds=varBinds, metrics=metrics)
 
         return metrics
 
@@ -45,9 +44,17 @@ def process_metrics(gen, processor=None):
 Display in the same format as snmpwalk.
 Ripped straight from http://snmplabs.com/pysnmp/quick-start.html
 """
-def mib_print(index, varBinds, metrics):
+def mib_print(varBinds, metrics):
     for varBind in varBinds:
         print(' = '.join([x.prettyPrint() for x in varBind]))
+
+"""
+Display in a debug format so that we can understand and map the Varbinds
+"""
+def debug_print(varBinds, metrics):
+    for iteration, (key, value) in enumerate(varBinds):
+        oid = key.prettyPrint().split('.')[-1]
+        print('iteration={}, oid={}: value={}'.format(iteration, oid, value))
 
 """
 Reducer function to manage custom_metric overload.
@@ -73,3 +80,6 @@ def reduce_average(metric_dict):
 			average_metrics.setdefault(endpoint, []).append(average_dict)
 
 	return average_metrics
+
+def split_oid_index(oid):
+    return oid.prettyPrint().split('.')[-1]

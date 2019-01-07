@@ -1,6 +1,6 @@
 import logging
 from .poller import Poller
-from .processing import process_metrics, reduce_average
+from .processing import process_metrics, reduce_average, split_oid_index
 
 logger = logging.getLogger(__name__)
 
@@ -67,8 +67,9 @@ ifHCOutUcastPkts -> varBinds[10]
 ifHCOutBroadcastPkts -> varBinds[11]
 ifHCOutMulticastPkts -> varBinds[12]
 """
-def calculate_interface_metrics(index, varBinds, metrics):
+def calculate_interface_metrics(varBinds, metrics):
 	#bandwidth = {'value': float(varBinds[0][1])}
+	index = split_oid_index(varBinds[0][0])
 	incoming_traffic = {'value': float(varBinds[1][1])}
 	outgoing_traffic = {'value': float(varBinds[2][1])}
 	incoming_errors = {'value': float(varBinds[3][1])}

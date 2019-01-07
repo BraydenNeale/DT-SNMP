@@ -1,6 +1,6 @@
 import logging
 from .poller import Poller
-from .processing import process_metrics, reduce_average
+from .processing import process_metrics, reduce_average, split_oid_index
 
 logger = logging.getLogger(__name__)
 
@@ -69,8 +69,9 @@ Processing Function to be used with processing.process_metrics
 Extracts the CPU utilisation for each index
 hrProcessorLoad -> varBinds[0]
 """
-def calculate_cpu_metrics(index, varBinds, metrics):
+def calculate_cpu_metrics(varBinds, metrics):
 	cpu = {}
+	index = split_oid_index(varBinds[0][0])
 	cpu['value'] = float(varBinds[0][1])
 	cpu['dimension'] = {'Index': index}
 	cpu['is_absolute_number'] = True
@@ -83,7 +84,7 @@ hrStorageDescr -> varBinds[0]
 hrStorageSize -> varBinds[1]
 hrStorageUsed -> varBinds[2]
 """
-def calculate_storage_metrics(index, varBinds, metrics):
+def calculate_storage_metrics(varBinds, metrics):
 	memory_types = ['memory', 'swap space', 'ram']
 
 	name = varBinds[0][1].prettyPrint()
