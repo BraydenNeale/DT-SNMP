@@ -147,6 +147,10 @@ def _validate_authentication(config):
         raise ConfigException('SNMP Version expected to be 2 or 3, received \'{}\''.format(snmp_version))
 
     # TODO If auth or priv protocols don't match expected inputs...
+    if auth_protocol:
+        auth_protocol = auth_protocol.lower()
+    if priv_protocol:
+        priv_protocol = priv_protocol.lower()
 
     authentication = {
         'version': snmp_version,
