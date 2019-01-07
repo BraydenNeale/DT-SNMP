@@ -27,19 +27,19 @@ class IFMIB():
 	
 	mib_name = 'IF-MIB'
 	mib_metrics = [
-	'ifSpeed', # Bandwidth
-	'ifHCInOctets', # Incoming Traffic
-	'ifHCOutOctets', # Outgoing Traffic,
-	'ifInErrors',
-	'ifOutErrors',
-	'ifInDiscards',
-	'ifOutDiscards',
-	'ifHCInUcastPkts',
-	'ifHCInBroadcastPkts',
-	'ifHCInMulticastPkts',
-	'ifHCOutUcastPkts',
-	'ifHCOutBroadcastPkts',
-	'ifHCOutMulticastPkts',
+		'ifSpeed', # Bandwidth
+		'ifHCInOctets', # Incoming Traffic
+		'ifHCOutOctets', # Outgoing Traffic,
+		'ifInErrors',
+		'ifOutErrors',
+		'ifInDiscards',
+		'ifOutDiscards',
+		'ifHCInUcastPkts',
+		'ifHCInBroadcastPkts',
+		'ifHCInMulticastPkts',
+		'ifHCOutUcastPkts',
+		'ifHCOutBroadcastPkts',
+		'ifHCOutMulticastPkts',
 	]
 
 	def __init__(self, device, authentication):
