@@ -5,6 +5,7 @@ from threading import Thread
 from pprint import pprint
 from dtsnmp.host_resource_mib import HostResourceMIB
 from dtsnmp.if_mib import IFMIB
+from dtsnmp.cisco_process_mib import CiscoProcessMIB
 
 """
 Test script designed to match the flow of custom_snmp_base_plugin_remote.py
@@ -26,6 +27,8 @@ def test_query():
     mib_list.append(hr_mib)
     if_mib = IFMIB(device, authentication)
     mib_list.append(if_mib)
+    cisco_mib = CiscoProcessMIB(device, authentication)
+    #mib_list.append(cisco_mib)
 
     for mib in mib_list:
         t = Thread(target=lambda q,mib: q.put(mib.poll_metrics()), args=([metric_queue, mib]))

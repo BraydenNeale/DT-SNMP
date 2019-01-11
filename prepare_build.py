@@ -1,6 +1,12 @@
 import fileinput
 from os import walk
 
+"""
+Helper script to bundle the local dtsnmp module into the main plugin code
+Prevents it from being wiped during oneagent_build_plugin
+Usage: python prepare_build.py
+"""
+
 def remove_module_imports(base_file):
 	remove_marker = 'from dtsnmp.'
 	with fileinput.input(base_file, inplace=True, backup='.bak') as file:
@@ -9,7 +15,7 @@ def remove_module_imports(base_file):
 				print(line, end='')
 
 def add_modules_to_base(module_path, base_file):
-	exclude_list = ['__init__.py']
+	exclude_list = ['__init__.py', 'cisco_process_mib.py']
 	skip_line_markers = ('from .', 'import logging', 'logger = logging')
 
 	# Get the list of all required module py files
