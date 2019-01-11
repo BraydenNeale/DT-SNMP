@@ -19,22 +19,25 @@ def process_metrics(gen, processor=None):
         if not processor:
             processor = mib_print
 
-        #processor = debug_print
+        # DT limits metric splits at 100, so stop processing after that
+        DIMENSION_LIMIT = 100
+        dimensions = 0
         metrics = {}
+
         for item in gen:
+            dimensions += 1
+            if dimensions > DIMENSION_LIMIT:
+                break
+
             errorIndication, errorStatus, errorIndex, varBinds = item
 
             if errorIndication:
                 logger.error(errorIndication)
-                # Return early or we could be stuck timing out hitting each index
-                # TODO handle this more gracefully
-                return metrics
+                break
             elif errorStatus:
                 logger.error('%s at %s' % (errorStatus.prettyPrint(),
                                     errorIndex and varBinds[int(errorIndex) - 1][0] or '?'))
-                # Return early or we could be stuck timing out hitting each index
-                # TODO handle this more gracefully
-                return metrics
+                break
             else:
                 processor(varBinds=varBinds, metrics=metrics)
 
@@ -53,7 +56,8 @@ Display in a debug format so that we can understand and map the Varbinds
 """
 def debug_print(varBinds, metrics):
     for iteration, (key, value) in enumerate(varBinds):
-        oid = key.prettyPrint().split('.')[-1]
+        #oid = key.prettyPrint().split('.')[-1]
+        oid = key
         print('iteration={}, oid={}: value={}'.format(iteration, oid, value))
 
 """
@@ -81,5 +85,11 @@ def reduce_average(metric_dict):
 
 	return average_metrics
 
+"""
+Split the index out from the rest of the OID
+IF-MIB::ifHCInOctets.1 -> 1
+1.3.6.1.2.1.31.1.1.1.6.1 -> 1
+IF-MIB::ifHCInOctets.2 -> 2
+"""
 def split_oid_index(oid):
     return oid.prettyPrint().split('.')[-1]
