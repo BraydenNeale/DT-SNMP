@@ -28,7 +28,7 @@ def test_query():
     if_mib = IFMIB(device, authentication)
     mib_list.append(if_mib)
     cisco_mib = CiscoProcessMIB(device, authentication)
-    #mib_list.append(cisco_mib)
+    mib_list.append(cisco_mib)
 
     for mib in mib_list:
         t = Thread(target=lambda q,mib: q.put(mib.poll_metrics()), args=([metric_queue, mib]))

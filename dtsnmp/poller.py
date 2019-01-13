@@ -41,20 +41,6 @@ class Poller():
         self.device = device
         self._build_auth_object()
 
-    def snmp_connect(self, oid):
-        """
-        Only use for old SNMP agents
-        Prefer snmp_connect_bulk in all cases
-        Send an snmp get request
-        """
-        gen = getCmd(
-            SnmpEngine(),
-            self.auth_object,
-            UdpTransportTarget((self.device['host'], self.device['port'])),
-            ContextData(),
-            ObjectType(ObjectIdentity(oid)))
-        return next(gen)
-
     def snmp_connect_bulk(self, oids):
         """
         Optimised get - supported with SNMPv2C
@@ -67,25 +53,41 @@ class Poller():
         Recommended to only call with lists of OIDs from the same table
         Otherwise you can end up polling for End of MIB.
         """
-        non_repeaters = 0
-        max_repetitions = 25
+
+        non_repeaters = 0 # pysnmp default
+        max_repetitions = 25 # pysnmp default
+        timeout = 5
+        retries = 0
+        oid_object = None
 
         if (isinstance(oids, str)):
             oid_object = [ObjectType(ObjectIdentity(oids))]
         elif (isinstance(oids, tuple)):
             oid_object = [ObjectType(ObjectIdentity(*oids))]
-        elif(isinstance(oids, list)): # List of Tuple
-            oid_object = [ObjectType(ObjectIdentity(*oid)) for oid in oids]
+        elif(isinstance(oids, list)):
+            if len(oids) > 0:
+                if (isinstance(oids[0], str)): # List of Str
+                    oid_object = [ObjectType(ObjectIdentity(oid)) for oid in oids]
+                elif (isinstance(oids[0], tuple)): # List of Tuple
+                    oid_object = [ObjectType(ObjectIdentity(*oid)) for oid in oids]
 
-        gen = bulkCmd(
-            SnmpEngine(),
-            self.auth_object,
-            UdpTransportTarget((self.device['host'], self.device['port'])),
-            ContextData(),
-            non_repeaters,
-            max_repetitions,             
-            *oid_object,
-            lexicographicMode=False)
+        gen = iter(())
+        if not oid_object:
+            logger.error('Invalid OID list passed to Poller')
+            return gen
+
+        try:
+            gen = bulkCmd(
+                SnmpEngine(),
+                self.auth_object,
+                UdpTransportTarget((self.device['host'], self.device['port']), timeout=timeout, retries=retries),
+                ContextData(),
+                non_repeaters,
+                max_repetitions,             
+                *oid_object,
+                lexicographicMode=False)
+        except Exception as e:
+            logger.error(e)
 
         return gen
 
