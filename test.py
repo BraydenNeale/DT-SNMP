@@ -28,7 +28,7 @@ def test_query():
     except Exception as e:
         # Just report the pysnmp exception back to the end user
         info = 'Device connection issue: check snmp access'
-        raise AuthException('{} - {}'.format(info,str(e)))
+        raise Exception('{} - {}'.format(info,str(e)))
 
     _display_properties(property_dict)
 
