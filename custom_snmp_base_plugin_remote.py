@@ -4,6 +4,7 @@ from threading import Thread
 
 from dtsnmp.host_resource_mib import HostResourceMIB
 from dtsnmp.if_mib import IFMIB
+from dtsnmp.snmpv2_mib import SNMPv2MIB
 
 import ruxit.api.selectors
 from ruxit.api.base_plugin import RemoteBasePlugin
@@ -27,6 +28,16 @@ class CustomSnmpBasePluginRemote(RemoteBasePlugin):
         authentication = _validate_authentication(config)
         _log_inputs(logger, device, authentication)
 
+        # Connection check and system properties
+        snmpv2_mib = SNMPv2MIB(device, authentication)
+        property_dict = {}
+        try:
+            property_dict = snmpv2_mib.poll_properties()
+        except Exception as e:
+            # Just report the pysnmp exception back to the end user
+            info = 'Device connection issue: check snmp access'
+            raise AuthException('{}: {}'.format(info,str(e)))
+
         # Create the group/device entities in Dynatrace
         g1_name = '{0} - {1}'.format(device['type'], device['group'])
         g1 = self.topology_builder.create_group(g1_name, g1_name)
@@ -38,11 +49,11 @@ class CustomSnmpBasePluginRemote(RemoteBasePlugin):
         thread_list = []
         mib_list = []
 
-        # Host Resource MIB - TODO Disk filtering
+        # Host Resource MIB
         hr_mib = HostResourceMIB(device, authentication)
         mib_list.append(hr_mib)
 
-        # IF MIB - TODO Interface filtering
+        # IF MIB
         if_mib = IFMIB(device, authentication)
         mib_list.append(if_mib)
 
@@ -69,9 +80,11 @@ class CustomSnmpBasePluginRemote(RemoteBasePlugin):
                     logger.info('Key = {}, Value = {}, Absolute? = {}, Dimension = {}'.format(endpoint, metric['value'], metric['is_absolute_number'], metric['dimension']))
 
         if custom_metrics == 0:
-            raise NothingToReportException('No metrics were returned when polling {}:{}'.format(device['host'], device['port']))
-        else:
-            e1.report_property('Custom metrics', str(custom_metrics))
+            raise NothingToReportException('Connected: But no metrics were returned when polling {}:{}'.format(device['host'], device['port']))
+
+        property_dict['Custom metrics'] = str(custom_metrics)
+        for key,value in property_dict.items():
+            e1.report_property(key, value)
 
 # Helper methods
 def _validate_device(config):

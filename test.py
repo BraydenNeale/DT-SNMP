@@ -6,6 +6,7 @@ from pprint import pprint
 from dtsnmp.host_resource_mib import HostResourceMIB
 from dtsnmp.if_mib import IFMIB
 from dtsnmp.cisco_process_mib import CiscoProcessMIB
+from dtsnmp.snmpv2_mib import SNMPv2MIB
 
 """
 Test script designed to match the flow of custom_snmp_base_plugin_remote.py
@@ -18,6 +19,18 @@ def test_query():
 
     device = _validate_device(config)
     authentication = _validate_authentication(config)
+
+    # Connection check and system properties
+    snmpv2_mib = SNMPv2MIB(device, authentication)
+    property_dict = {}
+    try:
+        property_dict = snmpv2_mib.poll_properties()
+    except Exception as e:
+        # Just report the pysnmp exception back to the end user
+        info = 'Device connection issue: check snmp access'
+        raise AuthException('{} - {}'.format(info,str(e)))
+
+    _display_properties(property_dict)
 
     metric_queue = Queue()
     thread_list = []
@@ -46,6 +59,10 @@ def _display_metrics(metric_queue):
         for endpoint,metrics in metric_queue.get().items():
             for metric in metrics:
                 print('Key = {}, Value = {}, Absolute? = {}, Dimension = {}'.format(endpoint, metric['value'], metric['is_absolute_number'], metric['dimension']))
+
+def _display_properties(property_dict):
+    for key,value in property_dict.items():
+        print('key = {}, Value = {}'.format(key,value))
 
 def _validate_device(config):
     hostname = config.get('hostname')

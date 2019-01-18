@@ -41,7 +41,7 @@ class Poller():
         self.device = device
         self._build_auth_object()
 
-    def snmp_connect_bulk(self, oids):
+    def snmp_connect_bulk(self, oids, timeout=2, retries=0):
         """
         Optimised get - supported with SNMPv2C
         Send a single getbulk request
@@ -56,8 +56,6 @@ class Poller():
 
         non_repeaters = 0 # pysnmp default
         max_repetitions = 25 # pysnmp default
-        timeout = 5
-        retries = 0
         oid_object = None
 
         if (isinstance(oids, str)):
@@ -88,6 +86,7 @@ class Poller():
                 lexicographicMode=False)
         except Exception as e:
             logger.error(e)
+            raise e
 
         return gen
 
