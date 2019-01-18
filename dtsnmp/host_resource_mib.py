@@ -50,9 +50,7 @@ class HostResourceMIB():
 		]
 		oids = [(self.mib_name, metric) for metric in cpu_metrics]
 		gen = self.poller.snmp_connect_bulk(oids)
-		cpu_metrics = process_metrics(gen, calculate_cpu_metrics)
-		# Average CPU to reduce custom metrics
-		return reduce_average(cpu_metrics)
+		return process_metrics(gen, calculate_cpu_metrics)
 
 	def _poll_storage(self):
 		storage_metrics = [
