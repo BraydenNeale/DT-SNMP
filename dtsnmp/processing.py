@@ -67,23 +67,27 @@ Dimensions are then ignored and set to None
 TODO - take the reducer as an arg to support sum, count, median...
 """
 def reduce_average(metric_dict):
-	average_metrics = {}
-	for endpoint,metrics in metric_dict.items():
-		count = len(metrics)
-		if count > 0:
-			average_dict = {}
-			average_dict['dimension'] = None
-			total = 0
+    average_metrics = {}
+    for endpoint,metrics in metric_dict.items():
+        count = len(metrics)
+        if count > 0:
+            average_dict = {}
+            average_dimension = None
+            is_absolute = False
+            total = 0
 
-			for metric in metrics:
-				total += metric['value']
-				is_absolute = metric['is_absolute_number']
+            for metric in metrics:
+                total += metric['value']
+                is_absolute = metric['is_absolute_number']
+                average_dimension = metric['dimension']
 
-			average_dict['is_absolute_number'] = is_absolute
-			average_dict['value'] = total / count
-			average_metrics.setdefault(endpoint, []).append(average_dict)
+            average_dict['is_absolute_number'] = is_absolute
+            average_dict['value'] = total / count
+            # Same dimension key... but value is now just 'average'
+            average_dict['dimension'] = average_dimension.fromkeys(average_dimension, 'Average')
+            average_metrics.setdefault(endpoint, []).append(average_dict)
 
-	return average_metrics
+    return average_metrics
 
 """
 Split the index out from the rest of the OID
