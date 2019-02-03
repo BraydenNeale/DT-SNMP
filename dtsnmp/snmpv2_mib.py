@@ -1,5 +1,6 @@
 import logging
 from .poller import Poller
+from .processing import convert_to_readable_time
 
 logger = logging.getLogger(__name__)
 
@@ -58,9 +59,9 @@ sysORLastChange -> varBinds[6]
 """
 def get_system_properties(varBinds, props):
 	props['sysDescr'] = str(varBinds[0][1])
-	props['sysUpTime'] = str(varBinds[1][1])
+	props['sysUpTime'] = convert_to_readable_time(str(varBinds[1][1]))
 	props['sysContact'] = str(varBinds[2][1])
 	props['sysName'] = str(varBinds[3][1])
 	props['sysLocation'] = str(varBinds[4][1])
 	props['sysServices'] = str(varBinds[5][1])
-	props['sysORLastChange'] = str(varBinds[6][1])
+	props['sysORLastChange'] = convert_to_readable_time(str(varBinds[6][1]))
