@@ -23,34 +23,60 @@ class CiscoProcessMIB():
 	
 	mib_name = 'CISCO-PROCESS-MIB'
 	mib_endpoints = [
-		'1.3.6.1.4.1.9.9.109.1.1.1.1.7',	# cpmCPUTotal1minRev - CPU busy % for the last min
-		'1.3.6.1.4.1.9.9.109.1.1.1.1.17', 	# cpmCPUMemoryHCUsed - Memory Used
-		'1.3.6.1.4.1.9.9.109.1.1.1.1.19' 	# cpmCPUMemoryHCFree - Memory Free
+		
+		
 	]
 
 	def __init__(self, device, authentication):
 		self.poller = Poller(device, authentication)
-		self.oids = self.mib_endpoints
 
 	def poll_metrics(self):
-		gen = self.poller.snmp_connect_bulk(self.oids)
-		return process_metrics(gen, calculate_cisco_metrics)
+		cpu = self._poll_cpu()
+		storage = self._poll_memory()
+
+		cpu_utilisation = cpu.get('cpu', [])
+		memory = storage.get('memory', [])
+		disk = storage.get('disk', [])
+
+		metrics = {
+			'cpu_utilisation': cpu_utilisation,
+			'memory_utilisation': memory,
+			'disk_utilisation': disk
+		}
+		return metrics
+
+	def _poll_cpu(self):
+		cpu_endpoints = {
+			'1.3.6.1.4.1.9.9.109.1.1.1.1.7'	# cpmCPUTotal1minRev - CPU busy % for the last min
+		}
+		gen = self.poller.snmp_connect_bulk(cpu_endpoints)
+		return process_metrics(gen, calculate_cisco_cpu)
+
+	def _poll_memory(self):
+		memory_endpoints = {
+			'1.3.6.1.4.1.9.9.109.1.1.1.1.17',	# cpmCPUMemoryHCUsed - Memory Used
+			'1.3.6.1.4.1.9.9.109.1.1.1.1.19' 	# cpmCPUMemoryHCFree - Memory Free
+		}
+		gen = self.poller.snmp_connect_bulk(memory_endpoints)
+		return process_metrics(gen, calculate_cisco_memory)
 
 """
-Processing Function to be used with processing.process_metrics
-Extracts the following for each interface
 cpmCPUTotal1minRev -> varBinds[0]
-cpmCPUMemoryHCUsed -> varBinds[1]
-cpmCPUMemoryHCFree -> varBinds[2]
 """
-def calculate_cisco_metrics(varBinds, metrics):
+def calculate_cisco_cpu(varBinds, metrics):
 	cpu = {}
 	cpu['value'] = float(varBinds[0][1])
 	cpu['dimension'] = None
 	cpu['is_absolute_number'] = True
+	metrics.setdefault('cpu_utilisation', []).append(cpu)
 
-	memory_used = varBinds[1][1]
-	memory_free = varBinds[2][1]
+"""
+cpmCPUMemoryHCUsed -> varBinds[0]
+cpmCPUMemoryHCFree -> varBinds[1]
+"""
+def calculate_cisco_memory(varBinds, metrics):
+	memory_used = varBinds[0][1]
+	memory_free = varBinds[1][1]
 	memory_total = memory_used + memory_free
 	memory_utilisation = (memory_used / memory_total) * 100
 	memory = {}
@@ -58,6 +84,4 @@ def calculate_cisco_metrics(varBinds, metrics):
 	memory['dimension'] = {'Storage': 'System memory'}
 	memory['is_absolute_number'] = True
 
-
-	metrics.setdefault('cpu_utilisation', []).append(cpu)
 	metrics.setdefault('memory_utilisation', []).append(memory)
