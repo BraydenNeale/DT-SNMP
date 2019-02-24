@@ -65,8 +65,9 @@ cpmCPUTotal1minRev -> varBinds[0]
 """
 def calculate_cisco_cpu(varBinds, metrics):
 	cpu = {}
+	index = split_oid_index(varBinds[0][0])
 	cpu['value'] = float(varBinds[0][1])
-	cpu['dimension'] = None
+	cpu['dimension'] = {'Index': index}
 	cpu['is_absolute_number'] = True
 	metrics.setdefault('cpu_utilisation', []).append(cpu)
 
