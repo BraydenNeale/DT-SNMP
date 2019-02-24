@@ -1,6 +1,6 @@
 {
    "name":"custom.remote.python.snmp-base",
-   "version":"1.004",
+   "version":"1.005",
    "type":"python",
    "requiredAgentVersion": "1.101.0",
    "entity":"CUSTOM_DEVICE",

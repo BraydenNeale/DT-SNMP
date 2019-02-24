@@ -79,7 +79,9 @@ def calculate_cisco_memory(varBinds, metrics):
 	memory_used = varBinds[0][1]
 	memory_free = varBinds[1][1]
 	memory_total = memory_used + memory_free
-	memory_utilisation = (memory_used / memory_total) * 100
+	memory_utilisation = 0
+	if memory_total > 0:
+		memory_utilisation = (memory_used / memory_total) * 100
 	memory = {}
 	memory['value'] = memory_utilisation
 	memory['dimension'] = {'Storage': 'System memory'}
