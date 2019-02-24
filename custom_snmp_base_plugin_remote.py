@@ -49,10 +49,17 @@ class CustomSnmpBasePluginRemote(RemoteBasePlugin):
         thread_list = []
         mib_list = []
 
-        # Host Resource MIB
+        # Host Metrics
+        # Use Cisco Process MIB for Cisco devices
+        # TODO Test this on site
+        # if 'cisco' in property_dict['sysDescr'].lower():
+        #     cisco_mib = CiscoProcessMIB(device, authentication)
+        #     mib_list.append(cisco_mib)
+        # else: # Host Resource Mib
         hr_mib = HostResourceMIB(device, authentication)
         mib_list.append(hr_mib)
 
+        # Network Metrics
         # IF MIB
         if_mib = IFMIB(device, authentication)
         mib_list.append(if_mib)
