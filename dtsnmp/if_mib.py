@@ -27,7 +27,7 @@ class IFMIB():
 	
 	mib_name = 'IF-MIB'
 	mib_metrics = [
-		'ifSpeed', # Bandwidth
+		'ifDescr',
 		'ifHCInOctets', # Incoming Traffic
 		'ifHCOutOctets', # Outgoing Traffic,
 		'ifInErrors',
@@ -53,7 +53,7 @@ class IFMIB():
 """
 Processing Function to be used with processing.process_metrics
 Extracts the following for each interface
-ifSpeed -> varBinds[0] (ignored)
+ifDescr -> varBinds[0]
 ifHCInOctets -> varBinds[1]
 ifHCOutOctets -> varBinds[2]
 ifInErrors -> varBinds[3]
@@ -68,8 +68,7 @@ ifHCOutBroadcastPkts -> varBinds[11]
 ifHCOutMulticastPkts -> varBinds[12]
 """
 def calculate_interface_metrics(varBinds, metrics):
-	#bandwidth = {'value': float(varBinds[0][1])}
-	index = split_oid_index(varBinds[0][0])
+	index = str(varBinds[0][1])
 	incoming_traffic = {'value': float(varBinds[1][1])}
 	outgoing_traffic = {'value': float(varBinds[2][1])}
 	incoming_errors = {'value': float(varBinds[3][1])}
