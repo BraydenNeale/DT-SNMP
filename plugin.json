@@ -1,6 +1,6 @@
 {
    "name":"custom.remote.python.snmp-base",
-   "version":"1.001",
+   "version":"1.002",
    "type":"python",
    "requiredAgentVersion": "1.101.0",
    "entity":"CUSTOM_DEVICE",
@@ -9,6 +9,7 @@
    "favicon": "https://assets.dynatrace.com/global/icons/infographic_rack.png",
    "source":{
       "package":"custom_snmp_base_plugin_remote",
+      "packages": ["dtsnmp"],
       "className":"CustomSnmpBasePluginRemote",
       "install_requires": ["pysnmp>=4.4.6", "pysnmp-mibs>=0.1.6", "requests>=2.6.0"],
       "activation":"Remote"

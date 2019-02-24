@@ -65,15 +65,9 @@ Download the Dynatrace plugin SDK from your Dynatrace Environment <br>
 `pip install plugin_sdk-1.157.168.20181127.170441-py3-none-any.whl`
 
 #### Building
-1. `prepare_build.py` - add dtsnmp module (see below)
-2. `sudo .../dtsnmp/bin/oneagent_build_plugin` - sdk build
+1. `sudo .../dtsnmp/bin/oneagent_build_plugin` - sdk build
 
-Files and directories are stipped out when the plugin is built, this wipes the local dtsnmp module. I am working out how to bundle this in as a required dependency. <br>
-
-Currently, before building it is required to copy each of the dtsnmp module files (classes, functions...) - **Poller**, **HostResourceMIB**, **processing** and **IFMIB** into the main **custom_snmp_base_plugin.py** file. <br>
-`prepare_build.py` Exists to automate this task, it will also backup the main extension python file.
-
-Finally, to build run the SDK command: `sudo .../dtsnmp/bin/oneagent_build_plugin` <br>
+Run the SDK command: `sudo .../dtsnmp/bin/oneagent_build_plugin` <br>
 This will fetch dependencies in plugin.json, compile and bundle everything together under: **/opt/dynatrace/remotepluginmodule/plugin_deployment/custom.remote.python.snmp-base.zip** - Linux
 
 #### Adding another MIB
