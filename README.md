@@ -6,7 +6,6 @@ This extension allows Dynatrace to monitor appliances that support standard SNMP
 * [HOST-RESOURCES-MIB](http://www.net-snmp.org/docs/mibs/host.html)
 * [IF-MIB](http://www.net-snmp.org/docs/mibs/interfaces.html)
 * **TODO** [CISCO-PROCESS-MIB](http://www.circitor.fr/Mibs/Html/C/CISCO-PROCESS-MIB.php)
-* **TODO** Many other standard MIBs
 
 By default this enables us to monitor device metrics
 * HOST-RESOURCES-MIB
@@ -19,11 +18,23 @@ By default this enables us to monitor device metrics
 	- Errors - Incoming/Outgoing
 	- Discarded packets - Incoming/Outgoing
 
+and properties:
+* SNMPv2-MIB
+	- sysDescr
+	- sysUpTime
+	- sysContact
+    - sysName
+	- sysLocation
+	- sysServices
+	- sysORLastChange
+
+To learn more about Dynatrace ActiveGate extensions see - [ActiveGate Plugins](https://www.dynatrace.com/support/help/extend-dynatrace/dynatrace-sdks/activegate-plugins/)<br>
+**This extension consumes custom metrics, for an understanding of how custom metrics are licensed and consumed in Dynatrace, see: [Calculate Monitoring Consumption](https://www.dynatrace.com/support/help/get-started/reference/calculate-monitoring-consumption/)**
+
 ### Images
 See the [Wiki](https://github.com/BraydenNeale/Dynatrace-SNMP/wiki) for example dashboard, OOTB and configuration screens
 
 ## Usage
-**TO DO** Github Release<br>
 Download the `custom.remote.python.snmp-base.zip` and upload to your Dynatrace Environment via **Settings - Monitoring - Monitored technologies.**
 You will also need to copy and unzip this to a Linux ActiveGate with a remote plugin module installed at path `/opt/dynatrace/remotepluginmodule/plugin_deployment`<br>
 
@@ -48,6 +59,7 @@ Once this has been uploaded succesfully you can start to configure monitoring of
 Once configured, you should see an 'Ok' status in the configuration UI and will start to see your device in the Technology overview and metrics availabile for custom charting.
 
 ## Development
+
 ### Dependencies
 * Python3.6
 * pysnmp >= 4.4.6
