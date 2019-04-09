@@ -5,10 +5,11 @@ Used for monitoring basic health of network devices and other appliances, the Ac
 This extension allows Dynatrace to monitor appliances that support standard SNMP MIB objects. You can also adapt this to poll for any SNMP exposed metrics.
 * [HOST-RESOURCES-MIB](http://www.net-snmp.org/docs/mibs/host.html)
 * [IF-MIB](http://www.net-snmp.org/docs/mibs/interfaces.html)
-* **TODO** [CISCO-PROCESS-MIB](http://www.circitor.fr/Mibs/Html/C/CISCO-PROCESS-MIB.php)
+* [CISCO-PROCESS-MIB](http://www.circitor.fr/Mibs/Html/C/CISCO-PROCESS-MIB.php)
+* [CISCO-ENHANCED-MEMPOOL-MIB](http://www.oidview.com/mibs/9/CISCO-ENHANCED-MEMPOOL-MIB.html)
 
 By default this enables us to monitor device metrics
-* HOST-RESOURCES-MIB
+* HOST-RESOURCES-MIB - (Or Cisco MIBs for Cisco devices)
 	- CPU utilisation
 	- Memory utilisation - Physical, Virtual, Cached, Buffers, Swap Space
 	- Disk Utilisation
