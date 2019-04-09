@@ -50,7 +50,7 @@ class CiscoProcessMIB():
 
 	def _poll_memory(self):
 		memory_endpoints = [
-			'1.3.6.1.4.1.9.9.221.1.1.1.1.3'		# cempMemPoolName - Mmmory Name
+			'1.3.6.1.4.1.9.9.221.1.1.1.1.3',	# cempMemPoolName - Mmmory Name
 			'1.3.6.1.4.1.9.9.221.1.1.1.1.7',	# cempMemPoolUsed - Memory Used
 			'1.3.6.1.4.1.9.9.221.1.1.1.1.8' 	# cempMemPoolFree - Memory Free
 		]
