@@ -22,10 +22,6 @@ class CiscoProcessMIB():
 	"""
 	
 	mib_name = 'CISCO-PROCESS-MIB'
-	mib_endpoints = [
-		
-		
-	]
 
 	def __init__(self, device, authentication):
 		self.poller = Poller(device, authentication)
@@ -46,17 +42,18 @@ class CiscoProcessMIB():
 		return metrics
 
 	def _poll_cpu(self):
-		cpu_endpoints = {
+		cpu_endpoints = [
 			'1.3.6.1.4.1.9.9.109.1.1.1.1.7'	# cpmCPUTotal1minRev - CPU busy % for the last min
-		}
+		]
 		gen = self.poller.snmp_connect_bulk(cpu_endpoints)
 		return process_metrics(gen, calculate_cisco_cpu)
 
 	def _poll_memory(self):
-		memory_endpoints = {
-			'1.3.6.1.4.1.9.9.109.1.1.1.1.17',	# cpmCPUMemoryHCUsed - Memory Used
-			'1.3.6.1.4.1.9.9.109.1.1.1.1.19' 	# cpmCPUMemoryHCFree - Memory Free
-		}
+		memory_endpoints = [
+			'1.3.6.1.4.1.9.9.221.1.1.1.1.3'		# cempMemPoolName - Mmmory Name
+			'1.3.6.1.4.1.9.9.221.1.1.1.1.7',	# cempMemPoolUsed - Memory Used
+			'1.3.6.1.4.1.9.9.221.1.1.1.1.8' 	# cempMemPoolFree - Memory Free
+		]
 		gen = self.poller.snmp_connect_bulk(memory_endpoints)
 		return process_metrics(gen, calculate_cisco_memory)
 
@@ -69,22 +66,24 @@ def calculate_cisco_cpu(varBinds, metrics):
 	cpu['value'] = float(varBinds[0][1])
 	cpu['dimension'] = {'Index': index}
 	cpu['is_absolute_number'] = True
-	metrics.setdefault('cpu_utilisation', []).append(cpu)
+	metrics.setdefault('cpu', []).append(cpu)
 
 """
-cpmCPUMemoryHCUsed -> varBinds[0]
-cpmCPUMemoryHCFree -> varBinds[1]
+cempMemPoolName -> varBinds[0]
+cempMemPoolUsed -> varBinds[1]
+cempMemPoolFree -> varBinds[2]
 """
 def calculate_cisco_memory(varBinds, metrics):
-	memory_used = varBinds[0][1]
-	memory_free = varBinds[1][1]
+	memory_name = varBinds[0][1].prettyPrint()
+	memory_used = float(varBinds[1][1])
+	memory_free = float(varBinds[2][1])
 	memory_total = memory_used + memory_free
 	memory_utilisation = 0
 	if memory_total > 0:
 		memory_utilisation = (memory_used / memory_total) * 100
 	memory = {}
 	memory['value'] = memory_utilisation
-	memory['dimension'] = {'Storage': 'System memory'}
+	memory['dimension'] = {'Storage': memory_name}
 	memory['is_absolute_number'] = True
 
-	metrics.setdefault('memory_utilisation', []).append(memory)
+	metrics.setdefault('memory', []).append(memory)
