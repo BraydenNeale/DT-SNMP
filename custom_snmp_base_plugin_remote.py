@@ -5,6 +5,7 @@ from threading import Thread
 from dtsnmp.host_resource_mib import HostResourceMIB
 from dtsnmp.if_mib import IFMIB
 from dtsnmp.snmpv2_mib import SNMPv2MIB
+from dtsnmp.cisco_process_mib import CiscoProcessMIB
 
 import ruxit.api.selectors
 from ruxit.api.base_plugin import RemoteBasePlugin
