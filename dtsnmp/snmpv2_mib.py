@@ -20,6 +20,7 @@ class SNMPv2MIB():
 	mib_name = 'SNMPv2-MIB'
 	mib_properties = [
 		'sysDescr',
+		'sysObjectID',
 		'sysUpTime',
 		'sysContact',
 		'sysName',
@@ -50,18 +51,20 @@ class SNMPv2MIB():
 
 """
 sysDescr -> varBinds[0]
-sysUpTime -> varBinds[1]
-sysContact -> varBinds[2]
-sysName -> varBinds[3]
-sysLocation -> varBinds[4]
-sysServices -> varBinds[5]
-sysORLastChange -> varBinds[6]
+sysObjectID -> varBinds[1]
+sysUpTime -> varBinds[2]
+sysContact -> varBinds[3]
+sysName -> varBinds[4]
+sysLocation -> varBinds[5]
+sysServices -> varBinds[6]
+sysORLastChange -> varBinds[7]
 """
 def get_system_properties(varBinds, props):
 	props['sysDescr'] = str(varBinds[0][1])
-	props['sysUpTime'] = convert_to_readable_time(str(varBinds[1][1]))
-	props['sysContact'] = str(varBinds[2][1])
-	props['sysName'] = str(varBinds[3][1])
-	props['sysLocation'] = str(varBinds[4][1])
-	props['sysServices'] = str(varBinds[5][1])
-	props['sysORLastChange'] = convert_to_readable_time(str(varBinds[6][1]))
+	props['sysObjectID'] = str(varBinds[1][1])
+	props['sysUpTime'] = convert_to_readable_time(str(varBinds[2][1]))
+	props['sysContact'] = str(varBinds[3][1])
+	props['sysName'] = str(varBinds[4][1])
+	props['sysLocation'] = str(varBinds[5][1])
+	props['sysServices'] = str(varBinds[6][1])
+	props['sysORLastChange'] = convert_to_readable_time(str(varBinds[7][1]))
