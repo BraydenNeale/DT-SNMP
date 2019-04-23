@@ -1,19 +1,14 @@
 # Dynatrace SNMP Polling Extension
 A Dynatrace ActiveGate SNMP Polling extension. <br>
 Used for monitoring basic health of network devices and other appliances, the ActiveGate will poll for these metrics every minute. Metrics can then be visualised and charted on Dynatrace dashboards and overview pages.<br>
+The goal is to be as device compatible and general as possible.<br>
 
-This extension allows Dynatrace to monitor appliances that support standard SNMP MIB objects. You can also adapt this to poll for any SNMP exposed metrics.
-* [HOST-RESOURCES-MIB](http://www.net-snmp.org/docs/mibs/host.html)
-* [IF-MIB](http://www.net-snmp.org/docs/mibs/interfaces.html)
-* [CISCO-PROCESS-MIB](http://www.circitor.fr/Mibs/Html/C/CISCO-PROCESS-MIB.php)
-* [CISCO-ENHANCED-MEMPOOL-MIB](http://www.oidview.com/mibs/9/CISCO-ENHANCED-MEMPOOL-MIB.html)
-
-By default this enables us to monitor device metrics
-* HOST-RESOURCES-MIB - (Or Cisco MIBs for Cisco devices)
+This extension enables Dynatrace to monitor basic device health metrics.
+* HOST (CISCO-MIB, F5-MIB or Host-RESOURCE-MIB)
 	- CPU utilisation
-	- Memory utilisation - Physical, Virtual, Cached, Buffers, Swap Space
+	- Memory utilisation
 	- Disk Utilisation
-* IF-MIB
+* NETWORK (IF-MIB)
 	- Network Traffic - Incoming/Outgoing
 	- Network packets - Incoming/Outgoing
 	- Errors - Incoming/Outgoing
@@ -22,12 +17,28 @@ By default this enables us to monitor device metrics
 and properties:
 * SNMPv2-MIB
 	- sysDescr
+	- sysObjectID
 	- sysUpTime
 	- sysContact
     - sysName
 	- sysLocation
 	- sysServices
 	- sysORLastChange
+
+
+It makes use of the following MIBs:
+* DEFAULT
+	- [SNMPv2-MIB](http://www.oidview.com/mibs/0/SNMPv2-MIB.html)
+	- [HOST-RESOURCES-MIB](http://www.net-snmp.org/docs/mibs/host.html)
+	- [IF-MIB](http://www.net-snmp.org/docs/mibs/interfaces.html)
+* CISCO
+	- [CISCO-PROCESS-MIB](http://www.circitor.fr/Mibs/Html/C/CISCO-PROCESS-MIB.php)
+	- [CISCO-ENHANCED-MEMPOOL-MIB](http://www.oidview.com/mibs/9/CISCO-ENHANCED-MEMPOOL-MIB.html)
+* F5
+	- [F5-BIGIP-SYSTEM-MIB](http://www.circitor.fr/Mibs/Html/F/F5-BIGIP-SYSTEM-MIB.php)
+
+
+**You can fork and adapt this to poll for any SNMP exposed metrics**
 
 To learn more about Dynatrace ActiveGate extensions see - [ActiveGate Plugins](https://www.dynatrace.com/support/help/extend-dynatrace/dynatrace-sdks/activegate-plugins/)<br>
 **This extension consumes custom metrics, for an understanding of how custom metrics are licensed and consumed in Dynatrace, see: [Calculate Monitoring Consumption](https://www.dynatrace.com/support/help/get-started/reference/calculate-monitoring-consumption/)**
