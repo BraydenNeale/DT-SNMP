@@ -37,6 +37,18 @@ def test_query():
     thread_list = []
     mib_list = []
 
+    # VENDOR/DEVICE SPECIFIC POLLING
+    DEVICE_OBJECT_ID = property_dict['sysObjectID']
+    F5_OBJECT_ID = '1.3.6.1.4.1.3375'
+    CISCO_OBJECT_ID = '1.3.6.1.4.1.9'
+
+    if DEVICE_OBJECT_ID.startswith(CISCO_OBJECT_ID):
+        print('CISCO')
+    elif DEVICE_OBJECT_ID.startswith(F5_OBJECT_ID):
+        print('F5')
+    else:
+        print('OTHER')
+
     hr_mib = HostResourceMIB(device, authentication)
     mib_list.append(hr_mib)
     if_mib = IFMIB(device, authentication)
