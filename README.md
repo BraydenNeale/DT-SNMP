@@ -75,7 +75,6 @@ Once configured, you should see an 'Ok' status in the configuration UI and will 
 ### Dependencies
 * Python3.6
 * pysnmp >= 4.4.6
-* pysnmp-mibs >= 0.1.6
 * requests >= 2.6.0
 
 ### Installation

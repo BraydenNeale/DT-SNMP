@@ -1,6 +1,6 @@
 {
 	"device_type":"server",
-	"hostname":"demo.snmplabs.com:161",
+	"hostname":"demo.snmplabs.com:1161",
 	"snmp_version":"2",
 	"snmp_user":"public",
 	"auth_protocol":null,
