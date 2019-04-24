@@ -13,6 +13,7 @@ class HostResourceMIB():
 
 	Reference
 	http://www.net-snmp.org/docs/mibs/host.html
+	https://www.oidview.com/mibs/0/HOST-RESOURCES-MIB.html
 
 	Usage
 	hr_mib = HostResourceMIB(device, authentication)
@@ -46,20 +47,20 @@ class HostResourceMIB():
 
 	def _poll_cpu(self):
 		cpu_metrics = [
-		    'hrProcessorLoad',
+		    '1.3.6.1.2.1.25.3.3.1.2'	# hrProcessorLoad
 		]
-		oids = [(self.mib_name, metric) for metric in cpu_metrics]
-		gen = self.poller.snmp_connect_bulk(oids)
+		
+		gen = self.poller.snmp_connect_bulk(cpu_metrics)
 		return process_metrics(gen, calculate_cpu_metrics)
 
 	def _poll_storage(self):
 		storage_metrics = [
-		    'hrStorageDescr',
-		    'hrStorageSize',
-		    'hrStorageUsed',
+			'1.3.6.1.2.1.25.2.3.1.3',	# hrStorageDescr
+			'1.3.6.1.2.1.25.2.3.1.5',	# hrStorageSize
+			'1.3.6.1.2.1.25.2.3.1.6'	# hrStorageUsed
 		]
-		oids = [(self.mib_name, metric) for metric in storage_metrics]
-		gen = self.poller.snmp_connect_bulk(oids)
+
+		gen = self.poller.snmp_connect_bulk(storage_metrics)
 		return process_metrics(gen, calculate_storage_metrics)
 
 """

@@ -13,6 +13,7 @@ class IFMIB():
 
 	Reference
 	http://www.net-snmp.org/docs/mibs/interfaces.html
+	http://www.oidview.com/mibs/0/IF-MIB.html
 	http://cric.grenoble.cnrs.fr/Administrateurs/Outils/MIBS/?oid=1.3.6.1.2.1.31.1.1.1
 
 	Usage
@@ -26,28 +27,27 @@ class IFMIB():
 	"""
 	
 	mib_name = 'IF-MIB'
-	mib_metrics = [
-		'ifDescr',
-		'ifHCInOctets', # Incoming Traffic
-		'ifHCOutOctets', # Outgoing Traffic,
-		'ifInErrors',
-		'ifOutErrors',
-		'ifInDiscards',
-		'ifOutDiscards',
-		'ifHCInUcastPkts',
-		'ifHCInBroadcastPkts',
-		'ifHCInMulticastPkts',
-		'ifHCOutUcastPkts',
-		'ifHCOutBroadcastPkts',
-		'ifHCOutMulticastPkts',
-	]
 
 	def __init__(self, device, authentication):
 		self.poller = Poller(device, authentication)
-		self.oids = [(self.mib_name, metric) for metric in self.mib_metrics]
 
 	def poll_metrics(self):
-		gen = self.poller.snmp_connect_bulk(self.oids)
+		if_metrics = [
+			'1.3.6.1.2.1.2.2.1.2',		# 'ifDescr',
+			'1.3.6.1.2.1.31.1.1.1.6',	# 'ifHCInOctets' = Incoming Traffic
+			'1.3.6.1.2.1.31.1.1.1.10',	# 'ifHCOutOctets' = Outgoing Traffic,
+			'1.3.6.1.2.1.2.2.1.14', 	# 'ifInErrors',
+			'1.3.6.1.2.1.2.2.1.20',		# 'ifOutErrors',
+			'1.3.6.1.2.1.2.2.1.13', 	# 'ifInDiscards',
+			'1.3.6.1.2.1.2.2.1.19',		# 'ifOutDiscards',
+			'1.3.6.1.2.1.31.1.1.1.7', 	# 'ifHCInUcastPkts',
+			'1.3.6.1.2.1.31.1.1.1.9', 	# 'ifHCInBroadcastPkts',
+			'1.3.6.1.2.1.31.1.1.1.8', 	# 'ifHCInMulticastPkts',
+			'1.3.6.1.2.1.31.1.1.1.11', 	# 'ifHCOutUcastPkts',
+			'1.3.6.1.2.1.31.1.1.1.13', 	# 'ifHCOutBroadcastPkts',
+			'1.3.6.1.2.1.31.1.1.1.12' 	# 'ifHCOutMulticastPkts'
+		]
+		gen = self.poller.snmp_connect_bulk(if_metrics)
 		return process_metrics(gen, calculate_interface_metrics)
 
 """
