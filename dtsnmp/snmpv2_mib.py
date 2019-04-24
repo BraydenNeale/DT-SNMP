@@ -13,30 +13,29 @@ class SNMPv2MIB():
 	http://www.oidview.com/mibs/0/SNMPv2-MIB.html
 
 	Usage
+	snmpv2_mib = SNMPv2MIB(device, authentication)
+	property_dict = snmpv2_mib.poll_properties()
 
 	Returns system property values
 	"""
-	
-	mib_name = 'SNMPv2-MIB'
-	mib_properties = [
-		'sysDescr',
-		'sysObjectID',
-		'sysUpTime',
-		'sysContact',
-		'sysName',
-		'sysLocation',
-		'sysServices',
-		'sysORLastChange'
-	]
 
 	def __init__(self, device, authentication):
 		self.poller = Poller(device, authentication)
-		self.oids = [(self.mib_name, prop) for prop in self.mib_properties]
 
 	def poll_properties(self):
+		mib_properties = [
+			'1.3.6.1.2.1.1.1',	# 'sysDescr',
+			'1.3.6.1.2.1.1.2',	# 'sysObjectID',
+			'1.3.6.1.2.1.1.3',	# 'sysUpTime',
+			'1.3.6.1.2.1.1.4',	# 'sysContact',
+			'1.3.6.1.2.1.1.5', 	# 'sysName',
+			'1.3.6.1.2.1.1.6',	# 'sysLocation',
+			'1.3.6.1.2.1.1.7',	# 'sysServices',
+			'1.3.6.1.2.1.1.8'	# 'sysORLastChange'
+		]
 		timeout = 2
 		retries = 1
-		gen = self.poller.snmp_connect_bulk(self.oids, timeout, retries)
+		gen = self.poller.snmp_connect_bulk(mib_properties, timeout, retries)
 		props = {}
 		errorIndication, errorStatus, errorIndex, varBinds = next(gen)
 		if errorIndication:

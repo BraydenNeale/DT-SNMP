@@ -16,6 +16,9 @@ class IFMIB():
 	http://www.oidview.com/mibs/0/IF-MIB.html
 	http://cric.grenoble.cnrs.fr/Administrateurs/Outils/MIBS/?oid=1.3.6.1.2.1.31.1.1.1
 
+	May need to refine which counters based on device bps
+	https://www.cisco.com/c/en/us/support/docs/ip/simple-network-management-protocol-snmp/26007-faq-snmpcounter.html
+	
 	Usage
 	if_mib = IFMIB(device, authentication)
 	if_metrics = if_mib.poll_metrics()
@@ -25,8 +28,6 @@ class IFMIB():
 	outgoing_errors, incoming_discards, outgoing_discards,
 	incoming_packets, outgoing_packets
 	"""
-	
-	mib_name = 'IF-MIB'
 
 	def __init__(self, device, authentication):
 		self.poller = Poller(device, authentication)

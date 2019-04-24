@@ -21,12 +21,8 @@ class HostResourceMIB():
 
 	Returns a dictionary containing values for:
 	cpu, memory, disk
-
-	TODO implement disk splits
 	"""
-
-	mib_name = 'HOST-RESOURCES-MIB'
-
+	
 	def __init__(self, device, authentication):
 		self.poller = Poller(device, authentication)
 

@@ -20,8 +20,6 @@ class F5BigIPSystemMIB():
 	CPU Utilsation
 	Memory Utilisation
 	"""
-	
-	mib_name = 'F5-BIGIP-SYSTEM-MIB'
 
 	def __init__(self, device, authentication):
 		self.poller = Poller(device, authentication)
