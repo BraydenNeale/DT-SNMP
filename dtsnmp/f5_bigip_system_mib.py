@@ -73,7 +73,7 @@ sysStatMemoryTotalKb -> varBinds[0]
 sysStatMemoryUsedKb -> varBinds[1]
 """
 def calculate_f5_memory(varBinds, metrics):
-	memory_name = 'Traffic Management Module'
+	memory_name = 'Traffic Management Microkernel'
 	memory_total = float(varBinds[0][1])
 	memory_used = float(varBinds[1][1])
 	memory_utilisation = 0
