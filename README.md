@@ -75,7 +75,6 @@ Once configured, you should see an 'Ok' status in the configuration UI and will 
 ### Dependencies
 * Python3.6
 * pysnmp >= 4.4.6
-* requests >= 2.6.0
 
 ### Installation
 Note: the Dynatrace oneagent comes bundled with Python3.6, so make sure to use Python3.6 when running `oneagent_build_plugin` ([Plugin SDK](https://dynatrace.github.io/plugin-sdk/readme.html)) as it will compile the correct native cryptodome modules.
