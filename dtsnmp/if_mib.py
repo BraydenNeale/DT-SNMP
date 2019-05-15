@@ -70,15 +70,30 @@ ifHCOutMulticastPkts -> varBinds[12]
 """
 def calculate_interface_metrics(varBinds, metrics):
 	index = str(varBinds[0][1])
-	incoming_traffic = {'value': float(varBinds[1][1])}
-	outgoing_traffic = {'value': float(varBinds[2][1])}
-	incoming_errors = {'value': float(varBinds[3][1])}
-	outgoing_errors = {'value': float(varBinds[4][1])}
-	incoming_discards = {'value': float(varBinds[5][1])}
-	outgoing_discards = {'value': float(varBinds[6][1])}
-	# Unicast + Broadcast + Multicast
-	total_incoming = float(varBinds[7][1]) + float(varBinds[8][1]) + float(varBinds[9][1])
-	total_outgoing = float(varBinds[10][1]) + float(varBinds[11][1]) + float(varBinds[12][1])
+
+	# Temp Hot Fix - issue #3
+	incoming_errors = {'value': 0}
+	outgoing_errors = {'value': 0}
+	incoming_discards = {'value': 0}
+	outgoing_discards = {'value': 0}
+	incoming_traffic = {'value': 0}
+	outgoing_traffic = {'value': 0}
+	total_incoming = 0
+	total_outgoing = 0
+
+	try:
+			incoming_errors['value'] = float(varBinds[3][1])
+			outgoing_errors['value'] = float(varBinds[4][1])
+			incoming_discards['value'] = float(varBinds[5][1])
+			outgoing_discards['value'] = float(varBinds[6][1])
+			incoming_traffic['value'] = float(varBinds[1][1])
+			outgoing_traffic['value'] = float(varBinds[2][1])
+			# Unicast + Broadcast + Multicast
+			total_incoming = float(varBinds[7][1]) + float(varBinds[8][1]) + float(varBinds[9][1])
+			total_outgoing = float(varBinds[10][1]) + float(varBinds[11][1]) + float(varBinds[12][1])
+	except ValueError as e:
+			logger.warning('IF-MIB {}: No more variables left in this MIB View'.format(index))
+	
 	incoming_packets = {'value': total_incoming}
 	outgoing_packets = {'value': total_outgoing}
 
