@@ -17,7 +17,7 @@ from ruxit.api.events import Event, EventMetadata
 logger = logging.getLogger(__name__)
 
 class CustomSnmpBasePluginRemote(RemoteBasePlugin):
-    def query(self, **kwargs):
+    def initialize(self, **kwargs):
         config = kwargs['config']      
         debug_logging = config['debug']
         if debug_logging:
@@ -26,9 +26,13 @@ class CustomSnmpBasePluginRemote(RemoteBasePlugin):
             logger.setLevel(logging.WARNING)
 
         # Ensure our inputs are valid
-        device = _validate_device(config)
-        authentication = _validate_authentication(config)
-        _log_inputs(logger, device, authentication)
+        self.device = _validate_device(config)
+        self.authentication = _validate_authentication(config)
+        _log_inputs(logger, self.device, self.authentication)
+
+    def query(self, **kwargs):
+        device = self.device
+        authentication = self.authentication
 
         # Connection check and system properties
         snmpv2_mib = SNMPv2MIB(device, authentication)
@@ -173,7 +177,7 @@ def _validate_authentication(config):
         raise ConfigException('Expected a number for SNMP Version, received \'{}\''.format(snmp_version))
 
     if snmp_version == 1:
-        raise ConfigException('SNMP Version 1 not yet? supported')
+        raise ConfigException('SNMP Version 1 not supported')
     elif not (snmp_version == 2 or snmp_version == 3):
         raise ConfigException('SNMP Version expected to be 2 or 3, received \'{}\''.format(snmp_version))
 
