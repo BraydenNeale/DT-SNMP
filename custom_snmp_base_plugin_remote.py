@@ -48,7 +48,7 @@ class CustomSnmpBasePluginRemote(RemoteBasePlugin):
         g1_name = '{0} - {1}'.format(device['type'], device['group'])
         g1 = self.topology_builder.create_group(g1_name, g1_name)
         e1_name = '{0} - {1}'.format(device['type'], device['host'])
-        e1 = g1.create_element(e1_name, e1_name)
+        e1 = g1.create_device(e1_name, e1_name)
         
         # Poll for snmp metrics
         metric_queue = Queue()
