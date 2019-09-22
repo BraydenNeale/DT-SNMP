@@ -92,7 +92,7 @@ def calculate_interface_metrics(varBinds, metrics):
 			total_incoming = float(varBinds[7][1]) + float(varBinds[8][1]) + float(varBinds[9][1])
 			total_outgoing = float(varBinds[10][1]) + float(varBinds[11][1]) + float(varBinds[12][1])
 	except ValueError as e:
-			logger.info('IF-MIB {}: No more variables left in this MIB View'.format(index))
+			logger.debug('IF-MIB {}: No more variables left in this MIB View'.format(index))
 	
 	incoming_packets = {'value': total_incoming}
 	outgoing_packets = {'value': total_outgoing}

@@ -1,4 +1,5 @@
 import logging
+import socket
 from queue import Queue
 from threading import Thread
 
@@ -99,11 +100,11 @@ class CustomSnmpBasePluginRemote(RemoteBasePlugin):
                         e1.relative(key=endpoint, value=metric['value'], dimensions=metric['dimension'])
 
                     custom_metrics += 1
-                    logger.info('Key = {}, Value = {}, Absolute? = {}, Dimension = {}'.format(endpoint, metric['value'], metric['is_absolute_number'], metric['dimension']))
 
         if custom_metrics == 0:
             raise NothingToReportException('Connected: But no metrics were returned when polling {}:{}'.format(device['host'], device['port']))
 
+        e1.add_endpoint(ip=socket.gethostbyname(device['host'])) 
         property_dict['Custom metrics'] = str(custom_metrics)
         for key,value in property_dict.items():
             e1.report_property(key, value)
