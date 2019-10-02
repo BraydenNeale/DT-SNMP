@@ -4,3 +4,4 @@ __pycache__
 dt-snmp-venv/
 dependencies/
 custom_snmp_base_plugin_remote.egg-info/
+release
