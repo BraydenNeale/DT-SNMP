@@ -104,7 +104,7 @@ class CustomSnmpBasePluginRemote(RemoteBasePlugin):
         if custom_metrics == 0:
             raise NothingToReportException('Connected: But no metrics were returned when polling {}:{}'.format(device['host'], device['port']))
 
-        e1.add_endpoint(ip=socket.gethostbyname(device['host'])) 
+        e1.add_endpoint(socket.gethostbyname(device['host'])) 
         property_dict['Custom metrics'] = str(custom_metrics)
         for key,value in property_dict.items():
             e1.report_property(key, value)
