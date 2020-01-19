@@ -1,6 +1,6 @@
 {
    "name":"custom.remote.python.snmp-base",
-   "version":"1.022",
+   "version":"1.023",
    "type":"python",
    "metricGroup": "custom.remote.python.snmp-base",
    "requiredAgentVersion": "1.101.0",
@@ -329,7 +329,9 @@
       },
       {
          "key": "auth_protocol",
-         "type": "String"
+         "type": "Dropdown",
+         "defaultValue":"",
+         "dropdownValues":["","md5","sha","sha224","sha256","sha384","sha512","noauth"]
       },
       {
          "key": "auth_key",
@@ -337,7 +339,9 @@
       },
       {
          "key": "priv_protocol",
-         "type": "String"
+         "type": "Dropdown",
+         "defaultValue":"",
+         "dropdownValues":["","des","3des","aes","aes192","aes256","nopriv"]
       },
       {
          "key": "priv_key",
@@ -359,9 +363,9 @@
          { "key" : "hostname", "displayName": "Hostname/IP of device", "displayOrder": 2, "displayHint": "127.0.0.1[:161]" },
          { "key" : "snmp_version", "displayName": "SNMP Version", "displayOrder": 3, "displayHint": "2/3" },
          { "key" : "snmp_user", "displayName": "SNMP auth user or community name", "displayOrder": 4, "displayHint": ""},
-         { "key" : "auth_protocol", "displayName": "SNMP v3 Auth protocol", "displayOrder": 5, "displayHint": "MD5/SHA (v3 only)"},
+         { "key" : "auth_protocol", "displayName": "SNMP v3 Auth protocol", "displayOrder": 5, "displayHint": "v3 only)"},
          { "key" : "auth_key", "displayName": "SNMP v3 Auth key", "displayOrder": 6, "displayHint": "v3 only"},
-         { "key" : "priv_protocol", "displayName": "SNMP v3 Priv protocol", "displayOrder": 7, "displayHint": "AES/DES (v3 only)"},
+         { "key" : "priv_protocol", "displayName": "SNMP v3 Priv protocol", "displayOrder": 7, "displayHint": "v3 only)"},
          { "key" : "priv_key", "displayName": "SNMP v3 Priv key", "displayOrder": 8, "displayHint": "v3 only"},
          { "key" : "debug", "displayName": "Enable debug logging", "displayOrder": 9},
          { "key" : "group", "displayName": "Name of the group", "displayOrder": 10, "displayHint": "Only used for visualization" }

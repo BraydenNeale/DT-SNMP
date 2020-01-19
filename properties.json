@@ -3,10 +3,10 @@
 	"hostname":"demo.snmplabs.com",
 	"snmp_version":"2",
 	"snmp_user":"public",
-	"auth_protocol":null,
-	"auth_key":null,
-	"priv_protocol":null,
-	"priv_key":null,
+	"auth_protocol":"",
+	"auth_key":"",
+	"priv_protocol":"",
+	"priv_key":"",
 	"group":"test",
 	"debug":true
 }
