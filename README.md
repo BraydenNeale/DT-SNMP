@@ -54,15 +54,15 @@ You will also need to copy and unzip this to a Linux ActiveGate with a remoteplu
 You can restart the Dynatrace remote plugin module via:
 * RedHat - `systemctl restart remotepluginmodule`
 * Ubuntu - `service remotepluginmodule restart`
-<br>**Note: This will not yet run on Windows ActiveGates - See Known Issues for details.** <br>
+<br>**Note: This will not run from Windows ActiveGates - See Known Issues for details.** <br>
 
-Basically, from your Linux ActiveGate with the Dynatrace remotepluginmodule running:
-`wget https://github.com/BraydenNeale/DT-SNMP/releases/download/1.023/custom.remote.python.snmp-base.zip`
-`mv custom.remote.python.snmp.base.zip /opt/dynatrace/remotepluginmodule/plugin_deployment`
-`unzip custom.remote.python.snmp.base.zip`
-`systemctl restart remotepluginmodule`
+**Basically, from your Linux ActiveGate with the Dynatrace remotepluginmodule running**
+* `wget https://github.com/BraydenNeale/DT-SNMP/releases/download/1.023/custom.remote.python.snmp-base.zip`
+* `mv custom.remote.python.snmp.base.zip /opt/dynatrace/remotepluginmodule/plugin_deployment`
+* `unzip custom.remote.python.snmp.base.zip`
+* `systemctl restart remotepluginmodule`
 
-Once this has been uploaded succesfully you can start to configure monitoring of devices listening for SNMP V2 and V3, using the configuration screen in the Dynatrace web UI:
+Once this has been uploaded succesfully you can start to configure monitoring of devices listening for SNMP V2 and V3, using the [Configuration screen](https://github.com/BraydenNeale/DT-SNMP/wiki#configuration) in the Dynatrace web UI:
 * **Endpoint name** - A display name for the config page - recommended to use hostname.
 * **Type of device** - Used for grouping similar devices together, e.g. Cisco Switch, Datapower
 * **Hostname/IP of device** - SNMP connection endpoint <HOSTNAME>:<PORT> e.g. mydevice.domain:161
@@ -80,8 +80,8 @@ Once configured, you should see an 'Ok' status in the configuration UI and will 
 For more information: See Dynatrace documentation: [How to deploy an activegate plugin](https://www.dynatrace.com/support/help/extend-dynatrace/extensions/development/extension-how-tos/deploy-an-activegate-plugin/)
 
 ### Errors
-* Use Github issues to help with any specific error troubleshooting [Issues](https://github.com/BraydenNeale/DT-SNMP/issues)
-* Some generic troubleshooting steps are also documented at [Dynatrace troubleshoot extension](https://www.dynatrace.com/support/help/extend-dynatrace/* extensions/troubleshooting/troubleshoot-extensions/)
+* Use Github [Issues](https://github.com/BraydenNeale/DT-SNMP/issues) to help with any specific error troubleshooting 
+* Some generic troubleshooting steps are also documented at [Dynatrace troubleshoot extension](https://www.dynatrace.com/support/help/extend-dynatrace/extensions/troubleshooting/troubleshoot-extensions/)
 
 ## Development
 Refer to this section if you are wanting to extend this to poll for other metrics or to be device specific.
