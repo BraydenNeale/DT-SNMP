@@ -48,15 +48,21 @@ To learn more about Dynatrace ActiveGate extensions see - [ActiveGate Plugins](h
 See the [Wiki](https://github.com/BraydenNeale/Dynatrace-SNMP/wiki) for example dashboard, OOTB and configuration screens
 
 ## Usage
-Download the `custom.remote.python.snmp-base.zip` and upload to your Dynatrace Environment via **Settings - Monitoring - Monitored technologies.**
-You will also need to copy and unzip this to a Linux ActiveGate with a remote plugin module installed at path `/opt/dynatrace/remotepluginmodule/plugin_deployment`<br>
+Download the [Latest relase](https://github.com/BraydenNeale/DT-SNMP/releases) `custom.remote.python.snmp-base.zip` and upload to your Dynatrace Environment via **Settings - Monitoring - Monitored technologies.**
+You will also need to copy and unzip this to a Linux ActiveGate with a remoteplugin module installed at path `/opt/dynatrace/remotepluginmodule/plugin_deployment`<br>
 
 You can restart the Dynatrace remote plugin module via:
 * RedHat - `systemctl restart remotepluginmodule`
 * Ubuntu - `service remotepluginmodule restart`
 <br>**Note: This will not yet run on Windows ActiveGates - See Known Issues for details.** <br>
 
-Once this has been uploaded succesfully you can start to configure monitoring of devices listening for SNMP V2 and V3, using the configuration screen in the Dynatrace UI:
+Basically, from your Linux ActiveGate with the Dynatrace remotepluginmodule running:
+`wget https://github.com/BraydenNeale/DT-SNMP/releases/download/1.023/custom.remote.python.snmp-base.zip`
+`mv custom.remote.python.snmp.base.zip /opt/dynatrace/remotepluginmodule/plugin_deployment`
+`unzip custom.remote.python.snmp.base.zip`
+`systemctl restart remotepluginmodule`
+
+Once this has been uploaded succesfully you can start to configure monitoring of devices listening for SNMP V2 and V3, using the configuration screen in the Dynatrace web UI:
 * **Endpoint name** - A display name for the config page - recommended to use hostname.
 * **Type of device** - Used for grouping similar devices together, e.g. Cisco Switch, Datapower
 * **Hostname/IP of device** - SNMP connection endpoint <HOSTNAME>:<PORT> e.g. mydevice.domain:161
@@ -71,7 +77,15 @@ Once this has been uploaded succesfully you can start to configure monitoring of
 
 Once configured, you should see an 'Ok' status in the configuration UI and will start to see your device in the Technology overview and metrics availabile for custom charting.
 
+For more information: See Dynatrace documentation: [How to deploy an activegate plugin](https://www.dynatrace.com/support/help/extend-dynatrace/extensions/development/extension-how-tos/deploy-an-activegate-plugin/)
+
+### Errors
+* Use Github issues to help with any specific error troubleshooting [Issues](https://github.com/BraydenNeale/DT-SNMP/issues)
+* Some generic troubleshooting steps are also documented at [Dynatrace troubleshoot extension](https://www.dynatrace.com/support/help/extend-dynatrace/* extensions/troubleshooting/troubleshoot-extensions/)
+
 ## Development
+Refer to this section if you are wanting to extend this to poll for other metrics or to be device specific.
+A Dynatrace ActiveGate extension tutorial is available at: [ActiveGate extensions tutorial](https://www.dynatrace.com/support/help/extend-dynatrace/extensions/activegate-extensions/write-your-first-activegate-plugin/)
 
 ### Dependencies
 * Python3.6
@@ -250,8 +264,6 @@ e.g. `snmpwalk -v3 -l authPriv -u <USER> -a SHA -A <AUTHKEY> -x AES -X <PRIVKEY>
 
 ## Known Issues
 * **Does not yet work for Windows ActiveGates** - `Error(Cannot load native module 'Cryptodome.Cipher._raw_ecb': Trying '_raw_ecb.cp36-win_amd64.pyd': [WinError 126] The specified module could not be found, Trying '_raw_ecb.pyd': [WinError 126] The specified module could not be found)` The modules exist and are compiled correctly... it may just not be using the correct Cryptodome\Util\Cipher\ path
-* **Thread exception handling** - When a thread enounters an exception it will just log (in most cases) and return an empty Dictionary to main. This should be handled more gracefully.
-* **Consumes a lot of custom metrics** - I will be adding configuration features to refine Disk and interface dimensions so that we don't just pull back metrics for 'everything'.
 
 ## Contributors
 * **[Vu Pham](https://github.com/beantoast)** - Wrote the first custom script for this on site using memcached as ActiveGate extensions were not yet available. See [Branch](https://github.com/BraydenNeale/Dynatrace-SNMP/tree/vu_legacy)
