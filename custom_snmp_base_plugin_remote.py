@@ -187,6 +187,13 @@ def _validate_authentication(config):
     if priv_protocol:
         priv_protocol = priv_protocol.lower()
 
+    # PySnmpError: Privacy implies authenticity - noauth + nopriv requires keys to be = None
+    if not auth_key:
+        auth_key = None
+    if not priv_key:
+        priv_key = None
+
+
     authentication = {
         'version': snmp_version,
         'user': snmp_user,
