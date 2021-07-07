@@ -1,5 +1,10 @@
 # DT SNMP Polling Extension
-## WARNING: This is a community plugin and is not officially supported by Dynatrace
+## Dynatrace will very soon release **out of the box** support for generic SNMP devices. If you can wait, it is highly recommended to use that instead. 
+## You can now already create your own using the declarative SNMP extensions: [Dynatrace SNMP-Extension](https://www.dynatrace.com/support/help/shortlink/snmp-extension)
+
+---
+
+<h2 style="color:orange">WARNING: This is a community plugin and is not officially supported by Dynatrace</h2>
 A Dynatrace ActiveGate SNMP Polling extension. <br>
 Used for monitoring basic health of network devices and other appliances, the ActiveGate will poll for these metrics every minute. Metrics can then be visualised and charted on Dynatrace dashboards and overview pages.<br>
 The goal is to be as device compatible and general as possible.<br>
