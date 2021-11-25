@@ -1,5 +1,6 @@
 # DT SNMP Polling Extension
 ## Dynatrace now supports monitoring of generic SNMP devices through an **Official** v2 extension. You can enable and use this today from the [Dynatrace HUB](https://www.dynatrace.com/hub/detail/snmp-generic/?query=generic)
+## Blog Post: https://www.dynatrace.com/news/blog/new-snmp-platform-extensions-provide-observability-at-scale-for-network-devices/
 ## You can also create your own using the declarative SNMP extensions: [Dynatrace SNMP-Extension](https://www.dynatrace.com/support/help/shortlink/snmp-extension)
 
 ---
